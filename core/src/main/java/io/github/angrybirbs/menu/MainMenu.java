@@ -20,6 +20,7 @@ public class MainMenu extends Menu {
     private Image bgImage;
     private ImageButton play;
     private ImageButton exit;
+    private ImageButton load;
 
     public MainMenu(Main game) {
         super(game);
@@ -43,8 +44,8 @@ public class MainMenu extends Menu {
 
 
         play = new ImageButton(
-            new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/Play.png")))),
-            new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/Play.png"))))
+            new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/levels.png")))),
+            new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/levelsp.png"))))
         );
         play.setSize(Gdx.graphics.getWidth()/5f, Gdx.graphics.getHeight()/5f);
         play.setPosition(
@@ -67,10 +68,10 @@ public class MainMenu extends Menu {
         );
 
         stage.addActor(exit);
-        exit.setSize(Gdx.graphics.getWidth()/7f, Gdx.graphics.getHeight()/7f);
+        exit.setSize(Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
 
         exit.setPosition(
-            0 - Gdx.graphics.getWidth()/30f,
+            0 - Gdx.graphics.getWidth()/50f,
             0
         );
 
@@ -82,7 +83,29 @@ public class MainMenu extends Menu {
             }
         });
 
-        render(1f);
+        load = new ImageButton(
+            new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/LoadGame.png")))),
+            new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/LoadGamep.png"))))
+        );
+
+        load.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new LoadMenu(game));
+                dispose();
+            }
+        });
+
+        stage.addActor(load);
+
+
+
+        load.setSize(Gdx.graphics.getWidth()/10f, Gdx.graphics.getHeight()/10f);
+        load.setPosition(
+            Gdx.graphics.getWidth()/2f - load.getWidth()/2,
+            Gdx.graphics.getHeight()/2f - load.getHeight()/2 - Gdx.graphics.getHeight()/5f
+        );
+
     }
 
 
