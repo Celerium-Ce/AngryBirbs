@@ -56,8 +56,9 @@ public class MainMenu extends Menu {
         play.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new LevelsMenu(game));
                 dispose();
-                Gdx.app.exit();
+
             }
         });
 
