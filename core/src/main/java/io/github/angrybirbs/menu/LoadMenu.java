@@ -81,7 +81,6 @@ public class LoadMenu extends Menu{
                 saveButton.clearChildren();
                 saveButton.add(buttonTable).expand().fill();
 
-                // Listener for loading save
                 saveButton.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {

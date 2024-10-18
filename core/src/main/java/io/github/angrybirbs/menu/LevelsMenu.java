@@ -93,9 +93,7 @@ public class LevelsMenu extends Menu {
                             case "3":
                                 game.setScreen(new Level3(game));
                                 break;
-                            // Add cases for other levels as needed
                             default:
-                                // Handle unknown level or do nothing
                                 break;
                         }
                         dispose();

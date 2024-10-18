@@ -4,8 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
+import io.github.angrybirbs.menu.LevelsMenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +26,13 @@ public abstract class Level implements Screen {
     protected List<Pig> pigs;
 
     protected boolean isPaused;
-    protected Texture pauseButtonTexture;
-    protected Texture pauseButtonPressedTexture;
 
-    protected Texture mainButtonTexture;
-    protected Texture mainButtonPressedTexture;
-    protected boolean showPauseMenuButtons;
-
-    protected Texture button1Texture;
-    protected Texture menuTexture;
-    protected Texture resumeTexture;
-    protected Texture restartTexture;
+    private Stage stage;
+    private ImageButton pauseButton;
+    private ImageButton backButton;
+    private ImageButton menuButton;
+    private ImageButton resumeButton;
+    private ImageButton restartButton;
 
     public Level(Main game) {
         this.game = game;
@@ -39,23 +42,79 @@ public abstract class Level implements Screen {
         birds = new ArrayList<>();
         pigs = new ArrayList<>();
 
-        loadLevelData(); // Load specific level data
+        loadLevelData();
 
         isPaused = false;
 
-        pauseButtonTexture = new Texture(Gdx.files.internal("Buttons/pause.png"));
-        button1Texture = new Texture(Gdx.files.internal("Buttons/back.png"));
-        menuTexture = new Texture(Gdx.files.internal("Buttons/menu.png"));
-        resumeTexture = new Texture(Gdx.files.internal("Buttons/resume.png"));
-        restartTexture = new Texture(Gdx.files.internal("Buttons/restart.png"));
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
 
-        showPauseMenuButtons = false;
+        setupButtons();
     }
 
     protected abstract void loadLevelData();
 
+    private void setupButtons() {
+        pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/pause.png")))));
+        pauseButton.setPosition(10, Gdx.graphics.getHeight() - 60);
+        pauseButton.setSize(50, 50);
+        pauseButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                togglePause();
+            }
+        });
+
+        backButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png")))));
+        backButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+
+        menuButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/menu.png")))));
+        menuButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+
+        resumeButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/resume.png")))));
+        resumeButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+
+        restartButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/restart.png")))));
+        restartButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new LoseScreen(game));
+                dispose();
+            }
+        });
+
+        menuButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new LevelsMenu(game));
+                dispose();
+            }
+        });
+
+        resumeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                isPaused = false;
+                hidePauseMenuButtons();
+            }
+        });
+
+        restartButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new LoseScreen(game));
+                dispose();
+            }
+        });
+
+        stage.addActor(pauseButton);
+    }
+
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(stage);
     }
 
     @Override
@@ -70,84 +129,56 @@ public abstract class Level implements Screen {
             pig.render(batch);
         }
 
-        if (isPaused) {
-            batch.draw(pauseButtonPressedTexture, 10, Gdx.graphics.getHeight() - 60, 50, 50);
-        } else {
-            batch.draw(pauseButtonTexture, 10, Gdx.graphics.getHeight() - 60, 50, 50);
-        }
-
-        if (showPauseMenuButtons) {
-            drawPauseMenuButtons();
-        }
-
         batch.end();
 
-        if (Gdx.input.isTouched()) {
-            float x = Gdx.input.getX();
-            float y = Gdx.input.getY();
+        stage.act(delta);
+        stage.draw();
 
-            // Check if pause button is clicked
-            if (x < 60 && y > Gdx.graphics.getHeight() - 60) {
-                togglePause();
-            }
-
-            if (x < 60 && y < Gdx.graphics.getHeight() - 120 && !showPauseMenuButtons) {
-                showPauseMenuButtons = true;
-            }
-
-            if (showPauseMenuButtons) {
-                handlePauseMenuButtonClicks(x, y);
-            }
+        if (isPaused) {
+            showPauseMenuButtons();
         }
     }
 
-    private void drawPauseMenuButtons() {
-        float centerX = Gdx.graphics.getWidth() / 2f - (Gdx.graphics.getWidth() / 20f) / 2f;
-        float centerY = Gdx.graphics.getHeight() / 2f - (Gdx.graphics.getHeight() / 20f) / 2f;
+    private void showPauseMenuButtons() {
+        float centerX = Gdx.graphics.getWidth() / 2f;
+        float centerY = Gdx.graphics.getHeight() / 2f;
 
-        batch.draw(button1Texture, centerX, centerY + (Gdx.graphics.getWidth() / 20f), Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
-        batch.draw(menuTexture, centerX - (Gdx.graphics.getWidth() / 20f) - 5, centerY, Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
-        batch.draw(resumeTexture, centerX, centerY, Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
-        batch.draw(restartTexture, centerX + (Gdx.graphics.getWidth() / 20f) + 5, centerY, Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+        backButton.setPosition(centerX - backButton.getWidth() / 2f, centerY + backButton.getHeight() + 20);
+        menuButton.setPosition(centerX - menuButton.getWidth() - 10, centerY);
+        resumeButton.setPosition(centerX - resumeButton.getWidth() / 2f, centerY);
+        restartButton.setPosition(centerX + 10, centerY);
+
+        stage.addActor(backButton);
+        stage.addActor(menuButton);
+        stage.addActor(resumeButton);
+        stage.addActor(restartButton);
     }
 
-    private void handlePauseMenuButtonClicks(float x, float y) {
-        float centerX = Gdx.graphics.getWidth() / 2f - (Gdx.graphics.getWidth() / 20f) / 2f;
-        float centerY = Gdx.graphics.getHeight() / 2f - (Gdx.graphics.getHeight() / 20f) / 2f;
-
-        if (x > centerX - 30 && x < centerX + 30 && y > centerY + 60 && y < centerY + 110) {
-            // Button 1 clicked (do nothing)
-        } else if (x > centerX - 30 && x < centerX + 30 && y > centerY && y < centerY + 50) {
-            // Button 2 clicked (do nothing)
-        } else if (x > centerX + 30 && x < centerX + 90 && y > centerY && y < centerY + 50) {
-            // Button 3 clicked (remove PauseMenu buttons)
-            showPauseMenuButtons = false;
-        } else if (x > centerX + 90 && x < centerX + 140 && y > centerY && y < centerY + 50) {
-            // Button 4 clicked (do nothing)
-        }
+    private void hidePauseMenuButtons() {
+        backButton.remove();
+        menuButton.remove();
+        resumeButton.remove();
+        restartButton.remove();
     }
 
     private void togglePause() {
         isPaused = !isPaused;
-        if (isPaused) {
-            pause();
-        } else {
-            resume();
+        if (!isPaused) {
+            hidePauseMenuButtons();
         }
     }
 
     @Override
     public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void pause() {
-        // Implement any PauseMenu pause logic here if needed
     }
 
     @Override
     public void resume() {
-        // Implement any PauseMenu resume logic here if needed
     }
 
     @Override
@@ -156,14 +187,9 @@ public abstract class Level implements Screen {
 
     @Override
     public void dispose() {
-        backgroundTexture.dispose();
         batch.dispose();
-        pauseButtonTexture.dispose();
-        pauseButtonPressedTexture.dispose();
-        button1Texture.dispose();
-        menuTexture.dispose();
-        resumeTexture.dispose();
-        restartTexture.dispose();
+        backgroundTexture.dispose();
+        stage.dispose();
 
         for (Bird bird : birds) {
             bird.dispose();
