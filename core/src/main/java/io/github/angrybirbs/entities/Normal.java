@@ -4,7 +4,7 @@ public class Normal extends Pig {
     private int power;
 
     public Normal(int x, int y) {
-        super("entities/BlueBird.png",x,y);
+        super("entities/NormalPig.png",x,y);
         this.power = 10;
     }
 

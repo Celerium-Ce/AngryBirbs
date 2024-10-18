@@ -4,7 +4,7 @@ public class King extends Pig {
     private int power;
 
     public King(int x, int y) {
-        super("entities/BlueBird.png",x,y);
+        super("entities/KingPig.png",x,y);
         this.power = 10;
     }
 

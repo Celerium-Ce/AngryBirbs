@@ -1,10 +1,10 @@
 package io.github.angrybirbs.entities;
 
-public class  extends Bird {
+public class General extends Pig {
     private int power;
 
-    public Blue(int x, int y) {
-        super("entities/BlueBird.png",x,y);
+    public General(int x, int y) {
+        super("entities/GeneralPig.png",x,y);
         this.power = 10;
     }
 

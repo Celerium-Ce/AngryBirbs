@@ -9,8 +9,9 @@ public class Bird {
     protected Texture texture;
     protected Vector2 position;
 
-    public Bird() {
-        this.position = new Vector2(0, 0);
+    public Bird(String texturePath, float x, float y) {
+        this.texture = new Texture(Gdx.files.internal(texturePath));
+        this.position = new Vector2(x, y);
     }
 
     public void render(SpriteBatch batch) {
