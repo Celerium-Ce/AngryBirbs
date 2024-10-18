@@ -12,8 +12,8 @@ public class Level2 extends Level {
     @Override
     protected void loadLevelData() {
         birds.add(new Red(300, 250));
-        birds.add(new Blue(250, 150));
-        birds.add(new Yellow(150, 150));
+        birds.add(new Red(250, 150));
+        birds.add(new Red(150, 150));
         birds.add(new Red(50, 150));
 
         pigs.add(new Normal(1850, 150));

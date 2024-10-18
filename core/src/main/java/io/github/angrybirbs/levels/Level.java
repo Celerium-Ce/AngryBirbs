@@ -1,34 +1,35 @@
-package io.github.angrybirbs;
+package io.github.angrybirbs.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Level implements Screen {
-    private Main game;
-    private Texture backgroundTexture;
-    private SpriteBatch batch;
+public abstract class Level implements Screen {
+    protected Main game;
+    protected Texture backgroundTexture;
+    protected SpriteBatch batch;
 
-    private List<Bird> birds;
-    private List<Pig> pigs;
+    protected List<Bird> birds;
+    protected List<Pig> pigs;
 
-    private boolean isPaused;
-    private Texture pauseButtonTexture;
-    private Texture pauseButtonPressedTexture;
+    protected boolean isPaused;
+    protected Texture pauseButtonTexture;
+    protected Texture pauseButtonPressedTexture;
 
-    private Texture mainButtonTexture;
-    private Texture mainButtonPressedTexture;
-    private boolean showPauseMenuButtons;
+    protected Texture mainButtonTexture;
+    protected Texture mainButtonPressedTexture;
+    protected boolean showPauseMenuButtons;
 
-    private Texture button1Texture;
-    private Texture menuTexture;
-    private Texture resumeTexture;
-    private Texture restartTexture;
+    protected Texture button1Texture;
+    protected Texture menuTexture;
+    protected Texture resumeTexture;
+    protected Texture restartTexture;
 
     public Level(Main game) {
         this.game = game;
@@ -36,21 +37,13 @@ public class Level implements Screen {
         batch = new SpriteBatch();
 
         birds = new ArrayList<>();
-        birds.add(new Red(300, 250));
-        birds.add(new Blue(250, 150));
-        birds.add(new Yellow(150, 150));
-        birds.add(new Red(50, 150));
-
         pigs = new ArrayList<>();
-        pigs.add(new Normal(1850, 150));
-        pigs.add(new King(1750, 150));
-        pigs.add(new General(1650, 150));
-        pigs.add(new Normal(1550, 150));
+
+        loadLevelData(); // Load specific level data
 
         isPaused = false;
 
         pauseButtonTexture = new Texture(Gdx.files.internal("Buttons/pause.png"));
-
         button1Texture = new Texture(Gdx.files.internal("Buttons/back.png"));
         menuTexture = new Texture(Gdx.files.internal("Buttons/menu.png"));
         resumeTexture = new Texture(Gdx.files.internal("Buttons/resume.png"));
@@ -58,6 +51,8 @@ public class Level implements Screen {
 
         showPauseMenuButtons = false;
     }
+
+    protected abstract void loadLevelData();
 
     @Override
     public void show() {
@@ -80,7 +75,6 @@ public class Level implements Screen {
         } else {
             batch.draw(pauseButtonTexture, 10, Gdx.graphics.getHeight() - 60, 50, 50);
         }
-
 
         if (showPauseMenuButtons) {
             drawPauseMenuButtons();
@@ -118,11 +112,9 @@ public class Level implements Screen {
     }
 
     private void handlePauseMenuButtonClicks(float x, float y) {
-        // Calculate the center position for the buttons
-        float centerX = Gdx.graphics.getWidth() / 2f - (Gdx.graphics.getWidth() / 20f) / 2f; // Center horizontally
-        float centerY = Gdx.graphics.getHeight() / 2f - (Gdx.graphics.getHeight() / 20f) / 2f; // Center vertically
+        float centerX = Gdx.graphics.getWidth() / 2f - (Gdx.graphics.getWidth() / 20f) / 2f;
+        float centerY = Gdx.graphics.getHeight() / 2f - (Gdx.graphics.getHeight() / 20f) / 2f;
 
-        // Check which PauseMenu button was clicked
         if (x > centerX - 30 && x < centerX + 30 && y > centerY + 60 && y < centerY + 110) {
             // Button 1 clicked (do nothing)
         } else if (x > centerX - 30 && x < centerX + 30 && y > centerY && y < centerY + 50) {
