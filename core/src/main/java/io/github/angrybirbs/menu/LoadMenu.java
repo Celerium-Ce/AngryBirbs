@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import io.github.angrybirbs.Main;
 import com.badlogic.gdx.Gdx;
+import io.github.angrybirbs.entities.*;
+import io.github.angrybirbs.levels.Level;
 
 
 import java.io.File;
@@ -59,7 +63,7 @@ public class LoadMenu extends Menu{
         saves = new ArrayList<ImageTextButton>();
 
         File saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
-        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".bat"));
+        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".json"));
 
         if (saveFiles != null) {
             Skin skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
@@ -84,6 +88,8 @@ public class LoadMenu extends Menu{
                 saveButton.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        Level level = createLevelFromJson(file);
+                        game.setScreen(level);
                         System.out.println("Loading save: " + file.getName());
                     }
                 });
@@ -109,5 +115,57 @@ public class LoadMenu extends Menu{
             );
             stage.addActor(noSaves);
         }
+    }
+
+    private Level createLevelFromJson(File file) {
+        Json json = new Json();
+
+        String jsonString = Gdx.files.absolute(file.getAbsolutePath()).readString();
+        JsonValue jsonData = json.fromJson(null, jsonString);
+
+        ArrayList<Bird> birds = new ArrayList<>();
+        ArrayList<Pig> pigs = new ArrayList<>();
+
+        JsonValue birdsData = jsonData.get("bird");
+        for (JsonValue birdEntry : birdsData) {
+            String type = birdEntry.name();
+            for (JsonValue position : birdEntry) {
+                float x = position.get(0).asFloat();
+                float y = position.get(1).asFloat();
+                switch (type) {
+                    case "red":
+                        birds.add(new Red((int) x, (int) y));
+                        break;
+                    case "blue":
+                        birds.add(new Blue((int) x, (int) y));
+                        break;
+                    case "yellow":
+                        birds.add(new Yellow((int) x, (int) y));
+                        break;
+                }
+            }
+        }
+
+        JsonValue pigsData = jsonData.get("pig");
+        for (JsonValue pigEntry : pigsData) {
+            String type = pigEntry.name();
+            for (JsonValue position : pigEntry) {
+                float x = position.get(0).asFloat();
+                float y = position.get(1).asFloat();
+                switch (type) {
+                    case "king":
+                        pigs.add(new King((int) x, (int) y));
+                        break;
+                    case "normal":
+                        pigs.add(new Normal((int) x, (int) y));
+                        break;
+                    case "general":
+                        pigs.add(new General((int) x, (int) y));
+                        break;
+                }
+            }
+        }
+
+        return new Level(game, birds, pigs);
     }
 }

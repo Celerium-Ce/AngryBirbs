@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -34,6 +35,8 @@ public class Level implements Screen, Serializable {
     private ImageButton menuButton;
     private ImageButton resumeButton;
     private ImageButton restartButton;
+    private ImageButton saveButton;
+    private Image menubg;
 
     public Level(Main game, List<Bird> birds, List<Pig> pigs) {
         this.game = game;
@@ -52,6 +55,8 @@ public class Level implements Screen, Serializable {
     }
 
     private void setupButtons() {
+
+
         pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/pause.png")))));
         pauseButton.setPosition(10, Gdx.graphics.getHeight() - 60);
         pauseButton.setSize(50, 50);
@@ -73,6 +78,9 @@ public class Level implements Screen, Serializable {
 
         restartButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/restart.png")))));
         restartButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+
+        saveButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/Save.png")))));
+        saveButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
 
         backButton.addListener(new ChangeListener() {
             @Override
@@ -105,6 +113,15 @@ public class Level implements Screen, Serializable {
                 dispose();
             }
         });
+
+        saveButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // save game implementation here
+            }
+        });
+
+        menubg = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/menubg.png")))));
 
         stage.addActor(pauseButton);
     }
@@ -144,11 +161,17 @@ public class Level implements Screen, Serializable {
         menuButton.setPosition(centerX - menuButton.getWidth() - 10, centerY);
         resumeButton.setPosition(centerX - resumeButton.getWidth() / 2f, centerY);
         restartButton.setPosition(centerX + 10, centerY);
+        saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY - saveButton.getHeight() - 20);
+        menubg.setPosition(centerX - menubg.getWidth()/2f, centerY - menubg.getHeight()/2f + 30);
+        menubg.setSize(Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 3f);
 
+        stage.addActor(menubg);
+        menubg.setZIndex(0);
         stage.addActor(backButton);
         stage.addActor(menuButton);
         stage.addActor(resumeButton);
         stage.addActor(restartButton);
+        stage.addActor(saveButton);
     }
 
     private void hidePauseMenuButtons() {
@@ -156,6 +179,8 @@ public class Level implements Screen, Serializable {
         menuButton.remove();
         resumeButton.remove();
         restartButton.remove();
+        saveButton.remove();
+        menubg.remove();
     }
 
     private void togglePause() {
