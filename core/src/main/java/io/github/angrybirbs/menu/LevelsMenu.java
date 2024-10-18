@@ -5,19 +5,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import io.github.angrybirbs.Main;
-import java.io.File;
-import java.util.ArrayList;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import io.github.angrybirbs.levels.Level1;
-import io.github.angrybirbs.levels.Level2;
-import io.github.angrybirbs.levels.Level3;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+import io.github.angrybirbs.entities.*;
+import io.github.angrybirbs.levels.Level;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class LevelsMenu extends Menu {
     private Texture backgroundTexture;
@@ -56,8 +57,8 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("SaveData/Levels").file().getAbsolutePath());
-        File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".ser"));
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
+        File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".json"));
 
         if (levelFiles != null) {
             Skin skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
@@ -66,12 +67,11 @@ public class LevelsMenu extends Menu {
             stage.addActor(table);
 
             for (File file : levelFiles) {
-                String levelName = file.getName().substring(0, file.getName().indexOf("."));
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
                 style.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/empty.png")));
 
-                ImageTextButton saveButton = new ImageTextButton(levelName, style);
+                ImageTextButton saveButton = new ImageTextButton(file.getName().substring(0, file.getName().indexOf(".")), style);
 
                 Table buttonTable = new Table();
                 buttonTable.add(saveButton.getImage()).expand().bottom().row();
@@ -80,25 +80,19 @@ public class LevelsMenu extends Menu {
                 saveButton.clearChildren();
                 saveButton.add(buttonTable).expand().fill();
 
+                // Listener for loading save
                 saveButton.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        switch (levelName) {
-                            case "1":
-                                game.setScreen(new Level1(game));
-                                break;
-                            case "2":
-                                game.setScreen(new Level2(game));
-                                break;
-                            case "3":
-                                game.setScreen(new Level3(game));
-                                break;
-                            default:
-                                break;
+
+                        Level level = createLevelFromJson(file);
+                        if (level != null) {
+                            game.setScreen(level);
                         }
                         dispose();
                     }
                 });
+
 
                 levels.add(saveButton);
                 table.add(saveButton).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
@@ -107,7 +101,8 @@ public class LevelsMenu extends Menu {
                     table.row();
                 }
             }
-        } else {
+        }
+        else {
             ImageButton noLevels = new ImageButton(
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png")))),
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png"))))
@@ -120,5 +115,57 @@ public class LevelsMenu extends Menu {
             );
             stage.addActor(noLevels);
         }
+    }
+
+    private Level createLevelFromJson(File file) {
+        Json json = new Json();
+
+        String jsonString = Gdx.files.absolute(file.getAbsolutePath()).readString();
+        JsonValue jsonData = json.fromJson(null, jsonString);
+
+        ArrayList<Bird> birds = new ArrayList<>();
+        ArrayList<Pig> pigs = new ArrayList<>();
+
+        JsonValue birdsData = jsonData.get("bird");
+        for (JsonValue birdEntry : birdsData) {
+            String type = birdEntry.name();
+            for (JsonValue position : birdEntry) {
+                float x = position.get(0).asFloat();
+                float y = position.get(1).asFloat();
+                switch (type) {
+                    case "red":
+                        birds.add(new Red((int) x, (int) y));
+                        break;
+                    case "blue":
+                        birds.add(new Blue((int) x, (int) y));
+                        break;
+                    case "yellow":
+                        birds.add(new Yellow((int) x, (int) y));
+                        break;
+                }
+            }
+        }
+
+        JsonValue pigsData = jsonData.get("pig");
+        for (JsonValue pigEntry : pigsData) {
+            String type = pigEntry.name();
+            for (JsonValue position : pigEntry) {
+                float x = position.get(0).asFloat();
+                float y = position.get(1).asFloat();
+                switch (type) {
+                    case "king":
+                        pigs.add(new King((int) x, (int) y));
+                        break;
+                    case "normal":
+                        pigs.add(new Normal((int) x, (int) y));
+                        break;
+                    case "general":
+                        pigs.add(new General((int) x, (int) y));
+                        break;
+                }
+            }
+        }
+
+        return new Level(game, birds, pigs);
     }
 }

@@ -14,10 +14,11 @@ import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Level implements Screen {
+public class Level implements Screen, Serializable {
     protected Main game;
     protected Texture backgroundTexture;
     protected SpriteBatch batch;
@@ -34,15 +35,13 @@ public abstract class Level implements Screen {
     private ImageButton resumeButton;
     private ImageButton restartButton;
 
-    public Level(Main game) {
+    public Level(Main game, List<Bird> birds, List<Pig> pigs) {
         this.game = game;
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
 
-        birds = new ArrayList<>();
-        pigs = new ArrayList<>();
-
-        loadLevelData();
+        this.birds = birds;
+        this.pigs = pigs;
 
         isPaused = false;
 
@@ -51,8 +50,6 @@ public abstract class Level implements Screen {
 
         setupButtons();
     }
-
-    protected abstract void loadLevelData();
 
     private void setupButtons() {
         pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/pause.png")))));
