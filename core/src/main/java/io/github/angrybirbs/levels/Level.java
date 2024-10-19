@@ -3,7 +3,10 @@ package io.github.angrybirbs.levels;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -11,10 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.Color;
+
 
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
+import io.github.angrybirbs.misc.Slingshot;
+import io.github.angrybirbs.misc.Slingshotinputprocessor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +32,7 @@ public class Level implements Screen {
     protected Main game;
     protected Texture backgroundTexture;
     protected SpriteBatch batch;
+    protected ShapeRenderer shapeRenderer;
 
     private int levelNum;
 
@@ -38,34 +46,35 @@ public class Level implements Screen {
 
     private Stage stage;
 
-    private ImageButton pauseButton;
-    private ImageButton menuButton;
-    private ImageButton nextButton;
-    private ImageButton resumeButton;
-    private ImageButton restartButton;
-    private ImageButton saveButton;
+    private ImageButton pauseButton, menuButton, nextButton, resumeButton, restartButton, saveButton;
 
-    private Image menubg;
-    private Image winImage;
-    private Image looseImage;
+    private Image menubg, winImage, looseImage;
+
+    private Slingshot slingshot;
+    private Slingshotinputprocessor slingshotinputprocessor;
+
+    private BitmapFont font;
 
     public Level(Main game, List<Bird> birds, List<Pig> pigs, int levelNum) {
         this.game = game;
         this.levelNum = levelNum;
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
+        font = new BitmapFont();
+        slingshot= new Slingshot(new Vector2(350,300));
 
         this.birds = birds;
         this.pigs = pigs;
-
+        slingshotinputprocessor = new Slingshotinputprocessor(slingshot,birds.getFirst(),this);
         this.initialBirds = cloneBirds(birds);
         this.initialPigs = clonePigs(pigs);
 
         isPaused = false;
 
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-
+        //Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(slingshotinputprocessor);
         setupButtons();
         setupGameEnd();
     }
@@ -242,6 +251,7 @@ public class Level implements Screen {
         stage.addActor(resumeButton);
         stage.addActor(restartButton);
         stage.addActor(saveButton);
+        Gdx.input.setInputProcessor(stage);
     }
 
     private void hidePauseMenuButtons() {
@@ -250,9 +260,10 @@ public class Level implements Screen {
         restartButton.remove();
         saveButton.remove();
         menubg.remove();
+        Gdx.input.setInputProcessor(slingshotinputprocessor);
     }
 
-    private void togglePause() {
+    public void togglePause() {
         isPaused = !isPaused;
         if (!isPaused) {
             hidePauseMenuButtons();
@@ -261,7 +272,7 @@ public class Level implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(slingshotinputprocessor);
     }
 
     @Override
@@ -290,6 +301,15 @@ public class Level implements Screen {
         }
 
         batch.end();
+
+        drawGrid();
+        if (slingshotinputprocessor.activebird==null && !birds.isEmpty()) {
+            slingshotinputprocessor.activebird = birds.getFirst();
+        }
+        //Gdx.app.log("Birds", "" + birds.size());
+        slingshot.renderDraggableArea(); // Highlight draggable area
+        slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
+        slingshot.render(delta);
 
         stage.act(delta);
         stage.draw();
@@ -321,6 +341,37 @@ public class Level implements Screen {
     @Override
     public void hide() {
     }
+
+    private void drawGrid() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.BLACK);
+
+        // Draw vertical lines
+        for (int x = 0; x < Gdx.graphics.getWidth(); x += 50) {
+            shapeRenderer.line(x, 0, x, Gdx.graphics.getHeight());
+        }
+
+        // Draw horizontal lines
+        for (int y = 0; y < Gdx.graphics.getHeight(); y += 50) {
+            shapeRenderer.line(0, y, Gdx.graphics.getWidth(), y);
+        }
+
+        shapeRenderer.end();
+
+
+        // Draw numbers
+        batch.begin();
+        font.setColor(Color.BLACK);
+        for (int x = 0; x < Gdx.graphics.getWidth(); x += 50) {
+            font.draw(batch, "" + x, x + 5, 15);
+        }
+        for (int y = 0; y < Gdx.graphics.getHeight(); y += 50) {
+            font.draw(batch,""+y, 5, y + 15);
+        }
+
+        batch.end();
+    }
+
 
     @Override
     public void dispose() {

@@ -30,7 +30,7 @@ public class Bird {
         checkForClick();
 
         if (!isAlive) {
-            batch.draw(texture, position.x, position.y);
+            batch.draw(texture, position.x-texture.getWidth()/2f, position.y-texture.getHeight()/2f);
         }
     }
 

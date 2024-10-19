@@ -1,13 +1,14 @@
 package io.github.angrybirbs.misc;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 public class Slingshot {
-    private Vector2 origin;
+    private final Vector2 origin;
     private Texture texture;
     private Vector2 dragPosition;
     private boolean isDragging;
@@ -46,12 +47,23 @@ public class Slingshot {
 
     public void render(float delta) {
         batch.begin();
-        batch.draw(texture, origin.x, origin.y);
+        batch.draw(texture, origin.x-texture.getWidth()/4f, origin.y-texture.getHeight()/2f, texture.getWidth()/2f, texture.getHeight()/2f);
         batch.end();
         if (isDragging) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.line(origin, dragPosition); // Visualize the stretch
             shapeRenderer.end();
         }
+    }
+
+    public void renderDraggableArea() {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        shapeRenderer.circle(origin.x, origin.y, 500); // Draw a circle with radius 50
+        shapeRenderer.end();
+    }
+
+    public Vector2 getOrigin() {
+        return origin;
     }
 }
