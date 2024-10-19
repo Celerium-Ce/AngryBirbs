@@ -69,8 +69,8 @@ public class Level implements Screen {
         setupButtons();
         setupGameEnd();
     }
-    
-       
+
+
     private List<Bird> cloneBirds(List<Bird> birds) {
         List<Bird> clonedBirds = new ArrayList<>();
         for (Bird bird : birds) {
@@ -155,17 +155,17 @@ public class Level implements Screen {
     }
 
     private void setupGameEnd() {
-        winImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Win.png")))));
-        winImage.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
+        winImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/winscreen.png")))));
+        winImage.setSize(Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 3f);
         winImage.setPosition((Gdx.graphics.getWidth() - winImage.getWidth()) / 2f,
-            (Gdx.graphics.getHeight() - winImage.getHeight()) / 2f);
+            (Gdx.graphics.getHeight() - winImage.getHeight()) / 2f + 10);
         winImage.setVisible(false);
         stage.addActor(winImage);
 
-        looseImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Loose.png")))));
-        looseImage.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
+        looseImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/losescreen.png")))));
+        looseImage.setSize(Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 3f);
         looseImage.setPosition((Gdx.graphics.getWidth() - looseImage.getWidth()) / 2f,
-            (Gdx.graphics.getHeight() - looseImage.getHeight()) / 2f);
+            (Gdx.graphics.getHeight() - looseImage.getHeight()) / 2f + 10);
         looseImage.setVisible(false);
         stage.addActor(looseImage);
     }
@@ -173,7 +173,7 @@ public class Level implements Screen {
     private void loadNextLevel() {
         int nextLevelNum = this.levelNum + 1;
 
-        File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
+        File nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
 
         if (nextLevelFile.exists()) {
             Level nextLevel = LevelsMenu.createLevelFromJson(nextLevelFile, nextLevelNum);
@@ -187,24 +187,24 @@ public class Level implements Screen {
         float centerX = Gdx.graphics.getWidth() / 2f;
         float centerY = Gdx.graphics.getHeight() / 2f;
 
-        menuButton.setPosition(centerX - menuButton.getWidth() - 10, centerY);
+        menuButton.setPosition(centerX - menuButton.getWidth()/2f - 50, centerY);
         stage.addActor(menuButton);
 
-        nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
-        stage.addActor(nextButton);
+        //nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
+        //stage.addActor(nextButton);
 
-        restartButton.setPosition(centerX + 10, centerY);
+        restartButton.setPosition(centerX - restartButton.getWidth()/2f + 50, centerY);
         stage.addActor(restartButton);
 
-        saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
-        stage.addActor(saveButton);
+        //saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
+        //stage.addActor(saveButton);
     }
-    
+
     private void restartLevel() {
         Level level = new Level(game, initialBirds, initialPigs, levelNum);
         game.setScreen(level);
     }
-    
+
     private boolean checkWinCondition() {
         return pigs.isEmpty();
     }
@@ -214,7 +214,7 @@ public class Level implements Screen {
         winImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);
     }
-   
+
     private boolean checkLooseCondition() {
         return birds.isEmpty();
     }
@@ -224,7 +224,7 @@ public class Level implements Screen {
         looseImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);
     }
-    
+
     private void showPauseMenuButtons() {
         float centerX = Gdx.graphics.getWidth() / 2f;
         float centerY = Gdx.graphics.getHeight() / 2f;
@@ -258,7 +258,7 @@ public class Level implements Screen {
             hidePauseMenuButtons();
         }
     }
-    
+
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
@@ -304,7 +304,7 @@ public class Level implements Screen {
             showLooseScreen();
         }
     }
-    
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
