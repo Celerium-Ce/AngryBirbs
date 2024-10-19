@@ -26,8 +26,8 @@ public class Slingshotinputprocessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector2 touch = new Vector2(screenX, screenY);
-        Gdx.app.log("Slingshotinputprocessor", "touchDown at: " + touch);
+        Vector2 touch = new Vector2(screenX, Gdx.graphics.getHeight()-screenY);
+        Gdx.app.log("Slingshotinputprocessor", "touchDown at: " + touch + (Gdx.graphics.getHeight()-touch.y));
         if (activebird!=null && activebird.getPosition().dst(touch) < 500) {
             slingshot.startDragging(touch);
             return true;
@@ -38,7 +38,7 @@ public class Slingshotinputprocessor implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         Gdx.app.log("Slingshotinputprocessor", "dragging at: " + new Vector2(screenX, screenY));
-        slingshot.updateDragPosition(new Vector2(screenX, screenY));
+        slingshot.updateDragPosition(new Vector2(screenX, Gdx.graphics.getHeight()-screenY));
         return true;
     }
 
@@ -54,6 +54,13 @@ public class Slingshotinputprocessor implements InputProcessor {
             return true;
         }
         return false;
+    }
+
+    public void setActiveBird(Bird bird) {
+        this.activebird = bird;
+        if (bird != null) {
+            bird.setPosition(slingshot.getOrigin().x, slingshot.getOrigin().y);
+        }
     }
 
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int lame) { return false; }

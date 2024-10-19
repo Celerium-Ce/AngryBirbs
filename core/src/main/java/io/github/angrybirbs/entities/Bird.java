@@ -62,6 +62,8 @@ public class Bird {
         }
     }
 
+
+
     public String getTexturePath() {
         return this.texturePath;
     }

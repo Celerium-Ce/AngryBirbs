@@ -287,6 +287,11 @@ public class Level implements Screen {
             if (bird.isToBeRemoved()) {
                 bird.dispose();
                 birdIterator.remove();
+                //temp bird remover
+                //some crash error here
+                if (slingshotinputprocessor.activebird == bird) {
+                    slingshotinputprocessor.setActiveBird(null);
+                }
             }
         }
 
@@ -303,14 +308,18 @@ public class Level implements Screen {
         batch.end();
 
         drawGrid();
-        if (slingshotinputprocessor.activebird==null && !birds.isEmpty()) {
-            slingshotinputprocessor.activebird = birds.getFirst();
-        }
-        //Gdx.app.log("Birds", "" + birds.size());
-        slingshot.renderDraggableArea(); // Highlight draggable area
-        slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
-        slingshot.render(delta);
 
+        if (slingshotinputprocessor.activebird == null && !birds.isEmpty()) {
+            slingshotinputprocessor.setActiveBird(birds.get(0));
+        }
+        //Gdx.app.log("Level", "Active bird: " + slingshotinputprocessor.activebird);
+        if (!isPaused && slingshotinputprocessor.activebird != null) {
+            slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
+        }
+        //Gdx.app.log("Level", "Active bird position: " + slingshotinputprocessor.activebird.getPosition());
+        slingshot.renderDraggableArea(); // Highlight draggable area
+        slingshot.render(delta);
+        slingshot.renderTrajectory();
         stage.act(delta);
         stage.draw();
 
