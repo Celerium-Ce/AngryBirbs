@@ -127,11 +127,12 @@ public class LoadMenu extends Menu{
 
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
+        ArrayList<Material> materials = new ArrayList<>();
 
         JsonValue birdsData = jsonData.get("bird");
-        for (JsonValue birdEntry : birdsData) {
-            String type = birdEntry.name();
-            for (JsonValue position : birdEntry) {
+        for (JsonValue birdType : birdsData) {
+            String type = birdType.name();
+            for (JsonValue position : birdType) {
                 float x = position.get(0).asFloat();
                 float y = position.get(1).asFloat();
                 switch (type) {
@@ -149,9 +150,9 @@ public class LoadMenu extends Menu{
         }
 
         JsonValue pigsData = jsonData.get("pig");
-        for (JsonValue pigEntry : pigsData) {
-            String type = pigEntry.name();
-            for (JsonValue position : pigEntry) {
+        for (JsonValue pigType : pigsData) {
+            String type = pigType.name();
+            for (JsonValue position : pigType) {
                 float x = position.get(0).asFloat();
                 float y = position.get(1).asFloat();
                 switch (type) {
@@ -168,6 +169,27 @@ public class LoadMenu extends Menu{
             }
         }
 
-        return new Level(game, birds, pigs, levelNum);
+        JsonValue materialsData = jsonData.get("material");
+        for (JsonValue materialType : materialsData) {
+            String type = materialType.name();
+            for (JsonValue position : materialType) {
+                float x = position.get(0).asFloat();
+                float y = position.get(1).asFloat();
+                boolean isHorizontal = position.get(2).asBoolean();
+
+                switch (type) {
+                    case "wood":
+                        materials.add(new Wood((int) x, (int) y, isHorizontal));
+                        break;
+                    case "ice":
+                        materials.add(new Ice((int) x, (int) y, isHorizontal));
+                        break;
+                    case "steel":
+                        materials.add(new Steel((int) x, (int) y, isHorizontal));
+                        break;
+                }
+            }
+        }
+        return new Level(game, birds, pigs, materials, levelNum);
     }
 }

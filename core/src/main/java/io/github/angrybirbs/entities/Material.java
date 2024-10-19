@@ -1,22 +1,37 @@
 package io.github.angrybirbs.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class Material {
     protected Texture texture;
-    protected Vector2 position;
-    protected String type;  // "ice", "steel", "wood"
+    private String texturePath;
 
-    public Material(String type, String texturePath, float x, float y) {
-        this.type = type;
-        this.texture = new Texture(texturePath);
+    protected Vector2 position;
+    protected float width, height;
+
+    private boolean isAlive;
+
+
+    public Material(String texturePath, float x, float y) {
+        this.texturePath = texturePath;
+        this.texture = new Texture(Gdx.files.internal(this.texturePath));
+
         this.position = new Vector2(x, y);
+        this.width = texture.getWidth();
+        this.height = texture.getHeight();
+
+        this.isAlive = false;
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x, position.y);
+        checkForClick();
+
+        if (!isAlive) {
+            batch.draw(texture, position.x, position.y);
+        }
     }
 
     public void dispose() {
@@ -27,11 +42,27 @@ public class Material {
         return position;
     }
 
-    public String getType() {
-        return type;
-    }
-
     public void setPosition(float x, float y) {
         this.position.set(x, y);
+    }
+
+    public boolean isToBeRemoved() {
+        return isAlive;
+    }
+
+    private void checkForClick() {
+        if (Gdx.input.justTouched()) {
+            float clickX = Gdx.input.getX();
+            float clickY = Gdx.graphics.getHeight() - Gdx.input.getY(); // as libgdx has 0,0 at bottom left while graphic systems usually have top left
+
+            if (clickX >= position.x && clickX <= position.x + width &&
+                clickY >= position.y && clickY <= position.y + height) {
+                isAlive = true;
+            }
+        }
+    }
+
+    public String getTexturePath() {
+        return this.texturePath;
     }
 }

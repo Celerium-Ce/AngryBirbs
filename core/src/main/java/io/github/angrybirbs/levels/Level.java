@@ -30,9 +30,11 @@ public class Level implements Screen {
 
     protected List<Bird> birds;
     protected List<Pig> pigs;
+    protected List<Material> materials;
 
     protected List<Bird> initialBirds;
     protected List<Pig> initialPigs;
+    protected List<Material> initialMaterials;
 
     protected boolean isPaused;
 
@@ -49,7 +51,7 @@ public class Level implements Screen {
     private Image winImage;
     private Image looseImage;
 
-    public Level(Main game, List<Bird> birds, List<Pig> pigs, int levelNum) {
+    public Level(Main game, List<Bird> birds, List<Pig> pigs,  List<Material> materials, int levelNum) {
         this.game = game;
         this.levelNum = levelNum;
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
@@ -57,9 +59,12 @@ public class Level implements Screen {
 
         this.birds = birds;
         this.pigs = pigs;
+        this.materials = materials;
 
         this.initialBirds = cloneBirds(birds);
         this.initialPigs = clonePigs(pigs);
+        this.initialMaterials = cloneMaterials(materials);
+
 
         isPaused = false;
 
@@ -85,6 +90,14 @@ public class Level implements Screen {
             clonedPigs.add(new Pig(pig.getTexturePath(), pig.getPosition().x, pig.getPosition().y));
         }
         return clonedPigs;
+    }
+
+    private List<Material> cloneMaterials(List<Material> materials) {
+        List<Material> cloneMaterials = new ArrayList<>();
+        for (Material material : materials) {
+            cloneMaterials.add(new Material(material.getTexturePath(), material.getPosition().x, material.getPosition().y));
+        }
+        return cloneMaterials;
     }
 
     private void setupButtons() {
@@ -201,7 +214,7 @@ public class Level implements Screen {
     }
 
     private void restartLevel() {
-        Level level = new Level(game, initialBirds, initialPigs, levelNum);
+        Level level = new Level(game, initialBirds, initialPigs, initialMaterials, levelNum);
         game.setScreen(level);
     }
 
@@ -289,6 +302,14 @@ public class Level implements Screen {
             }
         }
 
+        for (Material material : materials) {
+            material.render(batch);
+            if (material.isToBeRemoved()) {
+                material.dispose();
+            }
+        }
+
+
         batch.end();
 
         stage.act(delta);
@@ -333,6 +354,9 @@ public class Level implements Screen {
         }
         for (Pig pig : pigs) {
             pig.dispose();
+        }
+        for (Material material : materials) {
+            material.dispose();
         }
     }
 }
