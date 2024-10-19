@@ -57,7 +57,7 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".json"));
 
         if (levelFiles != null) {
@@ -84,8 +84,9 @@ public class LevelsMenu extends Menu {
                 saveButton.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        String levelNum = saveButton.getText().toString();
 
-                        Level level = createLevelFromJson(file);
+                        Level level = createLevelFromJson(file, Integer.parseInt(levelNum));
                         if (level != null) {
                             game.setScreen(level);
                         }
@@ -117,7 +118,7 @@ public class LevelsMenu extends Menu {
         }
     }
 
-    private Level createLevelFromJson(File file) {
+    public static Level createLevelFromJson(File file, int levelNum) {
         Json json = new Json();
 
         String jsonString = Gdx.files.absolute(file.getAbsolutePath()).readString();
@@ -166,6 +167,6 @@ public class LevelsMenu extends Menu {
             }
         }
 
-        return new Level(game, birds, pigs);
+        return new Level(game, birds, pigs, levelNum);
     }
 }

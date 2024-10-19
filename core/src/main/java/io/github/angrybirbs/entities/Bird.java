@@ -7,15 +7,31 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Bird {
     protected Texture texture;
+    private String texturePath;
+
     protected Vector2 position;
+    protected float width, height;
+
+    private boolean isAlive;
+
 
     public Bird(String texturePath, float x, float y) {
-        this.texture = new Texture(Gdx.files.internal(texturePath));
+        this.texturePath = texturePath;
+        this.texture = new Texture(Gdx.files.internal(this.texturePath));
+
         this.position = new Vector2(x, y);
+        this.width = texture.getWidth();
+        this.height = texture.getHeight();
+
+        this.isAlive = false;
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x, position.y);
+        checkForClick();
+
+        if (!isAlive) {
+            batch.draw(texture, position.x, position.y);
+        }
     }
 
     public void dispose() {
@@ -28,5 +44,25 @@ public class Bird {
 
     public void setPosition(float x, float y) {
         this.position.set(x, y);
+    }
+
+    public boolean isToBeRemoved() {
+        return isAlive;
+    }
+
+    private void checkForClick() {
+        if (Gdx.input.justTouched()) {
+            float clickX = Gdx.input.getX();
+            float clickY = Gdx.graphics.getHeight() - Gdx.input.getY(); // as libgdx has 0,0 at bottom left while graphic systems usually have top left
+
+            if (clickX >= position.x && clickX <= position.x + width &&
+                clickY >= position.y && clickY <= position.y + height) {
+                isAlive = true;
+            }
+        }
+    }
+
+    public String getTexturePath() {
+        return this.texturePath;
     }
 }

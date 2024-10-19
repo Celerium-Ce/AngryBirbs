@@ -11,40 +11,55 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
 
-import java.io.Serializable;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class Level implements Screen, Serializable {
+public class Level implements Screen {
     protected Main game;
     protected Texture backgroundTexture;
     protected SpriteBatch batch;
 
+    private int levelNum;
+
     protected List<Bird> birds;
     protected List<Pig> pigs;
+
+    protected List<Bird> initialBirds;
+    protected List<Pig> initialPigs;
 
     protected boolean isPaused;
 
     private Stage stage;
+
     private ImageButton pauseButton;
-    private ImageButton backButton;
     private ImageButton menuButton;
+    private ImageButton nextButton;
     private ImageButton resumeButton;
     private ImageButton restartButton;
     private ImageButton saveButton;
-    private Image menubg;
 
-    public Level(Main game, List<Bird> birds, List<Pig> pigs) {
+    private Image menubg;
+    private Image winImage;
+    private Image looseImage;
+
+    public Level(Main game, List<Bird> birds, List<Pig> pigs, int levelNum) {
         this.game = game;
+        this.levelNum = levelNum;
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
 
         this.birds = birds;
         this.pigs = pigs;
+
+        this.initialBirds = cloneBirds(birds);
+        this.initialPigs = clonePigs(pigs);
 
         isPaused = false;
 
@@ -52,11 +67,27 @@ public class Level implements Screen, Serializable {
         Gdx.input.setInputProcessor(stage);
 
         setupButtons();
+        setupGameEnd();
+    }
+    
+       
+    private List<Bird> cloneBirds(List<Bird> birds) {
+        List<Bird> clonedBirds = new ArrayList<>();
+        for (Bird bird : birds) {
+            clonedBirds.add(new Bird(bird.getTexturePath(), bird.getPosition().x, bird.getPosition().y));
+        }
+        return clonedBirds;
+    }
+
+    private List<Pig> clonePigs(List<Pig> pigs) {
+        List<Pig> clonedPigs = new ArrayList<>();
+        for (Pig pig : pigs) {
+            clonedPigs.add(new Pig(pig.getTexturePath(), pig.getPosition().x, pig.getPosition().y));
+        }
+        return clonedPigs;
     }
 
     private void setupButtons() {
-
-
         pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/pause.png")))));
         pauseButton.setPosition(10, Gdx.graphics.getHeight() - 60);
         pauseButton.setSize(50, 50);
@@ -67,11 +98,11 @@ public class Level implements Screen, Serializable {
             }
         });
 
-        backButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png")))));
-        backButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
-
         menuButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/menu.png")))));
         menuButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
+
+        nextButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/next.png")))));
+        nextButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
 
         resumeButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/resume.png")))));
         resumeButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
@@ -81,14 +112,6 @@ public class Level implements Screen, Serializable {
 
         saveButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/Save.png")))));
         saveButton.setSize(Gdx.graphics.getWidth() / 20f, Gdx.graphics.getHeight() / 20f);
-
-        backButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new LoseScreen(game));
-                dispose();
-            }
-        });
 
         menuButton.addListener(new ChangeListener() {
             @Override
@@ -105,19 +128,24 @@ public class Level implements Screen, Serializable {
                 hidePauseMenuButtons();
             }
         });
-
+        nextButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                loadNextLevel();
+            }
+        });
         restartButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new LoseScreen(game));
-                dispose();
+                isPaused = false;
+                hidePauseMenuButtons();
+                restartLevel();
             }
         });
 
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                // save game implementation here
             }
         });
 
@@ -126,38 +154,81 @@ public class Level implements Screen, Serializable {
         stage.addActor(pauseButton);
     }
 
-    @Override
-    public void show() {
+    private void setupGameEnd() {
+        winImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Win.png")))));
+        winImage.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
+        winImage.setPosition((Gdx.graphics.getWidth() - winImage.getWidth()) / 2f,
+            (Gdx.graphics.getHeight() - winImage.getHeight()) / 2f);
+        winImage.setVisible(false);
+        stage.addActor(winImage);
+
+        looseImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Loose.png")))));
+        looseImage.setSize(Gdx.graphics.getWidth() / 2f, Gdx.graphics.getHeight() / 2f);
+        looseImage.setPosition((Gdx.graphics.getWidth() - looseImage.getWidth()) / 2f,
+            (Gdx.graphics.getHeight() - looseImage.getHeight()) / 2f);
+        looseImage.setVisible(false);
+        stage.addActor(looseImage);
+    }
+
+    private void loadNextLevel() {
+        int nextLevelNum = this.levelNum + 1;
+
+        File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
+
+        if (nextLevelFile.exists()) {
+            Level nextLevel = LevelsMenu.createLevelFromJson(nextLevelFile, nextLevelNum);
+            game.setScreen(nextLevel);
+        } else {
+            game.setScreen(new LevelsMenu(game));
+        }
+    }
+
+    private void showGameEndMenuButtons() {
+        float centerX = Gdx.graphics.getWidth() / 2f;
+        float centerY = Gdx.graphics.getHeight() / 2f;
+
+        menuButton.setPosition(centerX - menuButton.getWidth() - 10, centerY);
+        stage.addActor(menuButton);
+
+        nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
+        stage.addActor(nextButton);
+
+        restartButton.setPosition(centerX + 10, centerY);
+        stage.addActor(restartButton);
+
+        saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
+        stage.addActor(saveButton);
+    }
+    
+    private void restartLevel() {
+        Level level = new Level(game, initialBirds, initialPigs, levelNum);
+        game.setScreen(level);
+    }
+    
+    private boolean checkWinCondition() {
+        return pigs.isEmpty();
+    }
+
+    private void showWinScreen() {
+        showGameEndMenuButtons();
+        winImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);
     }
-
-    @Override
-    public void render(float delta) {
-        batch.begin();
-        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        for (Bird bird : birds) {
-            bird.render(batch);
-        }
-        for (Pig pig : pigs) {
-            pig.render(batch);
-        }
-
-        batch.end();
-
-        stage.act(delta);
-        stage.draw();
-
-        if (isPaused) {
-            showPauseMenuButtons();
-        }
+   
+    private boolean checkLooseCondition() {
+        return birds.isEmpty();
     }
 
+    private void showLooseScreen() {
+        showGameEndMenuButtons();
+        looseImage.setVisible(true);
+        Gdx.input.setInputProcessor(stage);
+    }
+    
     private void showPauseMenuButtons() {
         float centerX = Gdx.graphics.getWidth() / 2f;
         float centerY = Gdx.graphics.getHeight() / 2f;
 
-        backButton.setPosition(centerX - backButton.getWidth() / 2f, centerY + backButton.getHeight() + 20);
         menuButton.setPosition(centerX - menuButton.getWidth() - 10, centerY);
         resumeButton.setPosition(centerX - resumeButton.getWidth() / 2f, centerY);
         restartButton.setPosition(centerX + 10, centerY);
@@ -167,7 +238,6 @@ public class Level implements Screen, Serializable {
 
         stage.addActor(menubg);
         menubg.setZIndex(0);
-        stage.addActor(backButton);
         stage.addActor(menuButton);
         stage.addActor(resumeButton);
         stage.addActor(restartButton);
@@ -175,7 +245,6 @@ public class Level implements Screen, Serializable {
     }
 
     private void hidePauseMenuButtons() {
-        backButton.remove();
         menuButton.remove();
         resumeButton.remove();
         restartButton.remove();
@@ -189,7 +258,53 @@ public class Level implements Screen, Serializable {
             hidePauseMenuButtons();
         }
     }
+    
+    @Override
+    public void show() {
+        Gdx.input.setInputProcessor(stage);
+    }
 
+    @Override
+    public void render(float delta) {
+        batch.begin();
+        batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        Iterator<Bird> birdIterator = birds.iterator();
+        while (birdIterator.hasNext()) {
+            Bird bird = birdIterator.next();
+            bird.render(batch);
+            if (bird.isToBeRemoved()) {
+                bird.dispose();
+                birdIterator.remove();
+            }
+        }
+
+        Iterator<Pig> pigIterator = pigs.iterator();
+        while (pigIterator.hasNext()) {
+            Pig pig = pigIterator.next();
+            pig.render(batch);
+            if (pig.isToBeRemoved()) {
+                pig.dispose();
+                pigIterator.remove();
+            }
+        }
+
+        batch.end();
+
+        stage.act(delta);
+        stage.draw();
+
+        if (isPaused) {
+            showPauseMenuButtons();
+        }
+        if (checkWinCondition()) {
+            showWinScreen();
+        }
+        if (checkLooseCondition()) {
+            showLooseScreen();
+        }
+    }
+    
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
@@ -215,6 +330,9 @@ public class Level implements Screen, Serializable {
 
         for (Bird bird : birds) {
             bird.dispose();
+        }
+        for (Pig pig : pigs) {
+            pig.dispose();
         }
     }
 }

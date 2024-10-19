@@ -10,7 +10,7 @@ import io.github.angrybirbs.Main;
 
 /** First screen of the application. Displayed after the application is created. */
 public abstract class Menu implements Screen {
-    protected final Main game;
+    protected static Main game;
     protected final Stage stage;
     protected Texture backgroundTexture;
     public Menu(Main game) {

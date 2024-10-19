@@ -88,7 +88,9 @@ public class LoadMenu extends Menu{
                 saveButton.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        Level level = createLevelFromJson(file);
+                        String levelNum = saveButton.getText().toString();
+
+                        Level level = createLevelFromJson(file, Integer.parseInt(levelNum));
                         game.setScreen(level);
                         System.out.println("Loading save: " + file.getName());
                     }
@@ -117,7 +119,7 @@ public class LoadMenu extends Menu{
         }
     }
 
-    private Level createLevelFromJson(File file) {
+    private Level createLevelFromJson(File file, int levelNum) {
         Json json = new Json();
 
         String jsonString = Gdx.files.absolute(file.getAbsolutePath()).readString();
@@ -166,6 +168,6 @@ public class LoadMenu extends Menu{
             }
         }
 
-        return new Level(game, birds, pigs);
+        return new Level(game, birds, pigs, levelNum);
     }
 }
