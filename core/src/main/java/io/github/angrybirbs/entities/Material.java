@@ -30,7 +30,7 @@ public class Material {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(position.x / PPM, position.y / PPM);
+        bodyDef.position.set(position.x / PPM + width/(2*PPM), position.y / PPM );
 
         body = world.createBody(bodyDef);
 
@@ -39,7 +39,7 @@ public class Material {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density = 10.0f;
+        fixtureDef.density = 100.0f;
         fixtureDef.friction = 10f;
         fixtureDef.restitution = 0.01f;
 
