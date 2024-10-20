@@ -86,7 +86,8 @@ public class Level implements Screen {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density = 1.0f;
+        fixtureDef.density = 1000.0f;
+        fixtureDef.friction=100f;
         Fixture fixture = ground.createFixture(fixtureDef);
         ground.setUserData("ground");
         fixture.setUserData("ground");
@@ -119,7 +120,7 @@ public class Level implements Screen {
     private List<Pig> clonePigs(List<Pig> pigs) {
         List<Pig> clonedPigs = new ArrayList<>();
         for (Pig pig : pigs) {
-            clonedPigs.add(new Pig(pig.getTexturePath(), pig.getPosition().x, pig.getPosition().y));
+            clonedPigs.add(new Pig(world,pig.getTexturePath(), pig.getPosition().x, pig.getPosition().y));
         }
         return clonedPigs;
     }

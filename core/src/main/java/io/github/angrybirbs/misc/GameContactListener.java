@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import io.github.angrybirbs.entities.Bird;
+import io.github.angrybirbs.entities.Pig;
 
 public class GameContactListener implements ContactListener {
     @Override
@@ -25,6 +26,20 @@ public class GameContactListener implements ContactListener {
             }
         }
 
+        if (birdandpig(contact)){
+            Gdx.app.log("GameContactListener", "Bird hit the pig");
+            Object userDataA = contact.getFixtureA().getUserData();
+            Object userDataB = contact.getFixtureB().getUserData();
+
+            if (userDataB instanceof Pig) {
+                Gdx.app.log("GameContactListener", "Object B");
+                ((Pig) userDataB).setDead();
+            }
+            if (userDataA instanceof Pig) {
+                Gdx.app.log("GameContactListener", "Object A");
+                ((Pig) userDataA).setDead();
+            }
+        }
         //Gdx.app.log("GameContactListener", "beginContact");
     }
 
@@ -46,5 +61,10 @@ public class GameContactListener implements ContactListener {
     private boolean birdandground(Contact contact) {
         return contact.getFixtureA().getUserData() instanceof Bird && contact.getFixtureB().getUserData().equals("ground") ||
                 contact.getFixtureA().getUserData().equals("ground") && contact.getFixtureB().getUserData() instanceof Bird;
+    }
+
+    private boolean birdandpig(Contact contact) {
+        return contact.getFixtureA().getUserData() instanceof Bird && contact.getFixtureB().getUserData() instanceof Pig ||
+                contact.getFixtureA().getUserData() instanceof Pig && contact.getFixtureB().getUserData() instanceof Bird;
     }
 }

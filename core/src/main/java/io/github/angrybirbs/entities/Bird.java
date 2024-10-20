@@ -17,7 +17,7 @@ public class Bird {
     protected Vector2 position;
     protected float width, height;
 
-    private boolean isAlive;
+    private boolean isDead;
 
 
     public Bird(World world, String texturePath, float x, float y) {
@@ -54,13 +54,13 @@ public class Bird {
         togglephysics();
         shape.dispose();
 
-        this.isAlive = false;
+        this.isDead = false;
     }
 
     public void render(SpriteBatch batch) {
         position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
 
-        if (!isAlive) {
+        if (!isDead) {
             batch.draw(texture, position.x-texture.getWidth()/2f, position.y-texture.getHeight()/2f);
         }
     }
@@ -75,7 +75,7 @@ public class Bird {
     }
 
     public void setDead(){
-        isAlive = true;
+        isDead = true;
     }
 
     public void dispose() {
@@ -91,7 +91,7 @@ public class Bird {
     }
 
     public boolean isToBeRemoved() {
-        return isAlive;
+        return isDead;
     }
 
     private void checkForClick() {
@@ -101,7 +101,7 @@ public class Bird {
 
             if (clickX >= position.x && clickX <= position.x + width &&
                 clickY >= position.y && clickY <= position.y + height) {
-                isAlive = true;
+                isDead = true;
             }
         }
     }

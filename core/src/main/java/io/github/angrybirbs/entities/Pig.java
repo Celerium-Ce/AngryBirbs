@@ -4,18 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
+
+import static io.github.angrybirbs.levels.Level.PPM;
 
 public class Pig {
     protected Texture texture;
     private String texturePath;
+    private Body body;
+    private World world;
 
     protected Vector2 position;
     protected float width, height;
 
-    private boolean isAlive;
+    private boolean isDead;
 
-
-    public Pig(String texturePath, float x, float y) {
+    public Pig(World world,String texturePath, float x, float y) {
         this.texturePath = texturePath;
         this.texture = new Texture(Gdx.files.internal(this.texturePath));
 
@@ -23,23 +27,69 @@ public class Pig {
         this.width = texture.getWidth();
         this.height = texture.getHeight();
 
-        this.isAlive = false;
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(position.x / PPM, position.y / PPM);
+
+        body = world.createBody(bodyDef);
+
+        CircleShape shape = new CircleShape();
+        shape.setRadius(width / 2 / PPM);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 10.0f;
+        fixtureDef.friction = 1000f;
+        fixtureDef.restitution = 0.1f;
+
+
+        Fixture fixture=body.createFixture(fixtureDef);
+        fixture.setUserData(this);
+        body.setUserData(this);
+        shape.dispose();
+        //togglephysics();
+        this.isDead = false;
     }
 
     public void render(SpriteBatch batch) {
+
+
+        position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
         checkForClick();
 
-        if (!isAlive) {
-            batch.draw(texture, position.x, position.y);
+        if (!isDead) {
+            batch.draw(texture, position.x-texture.getWidth()/2f, position.y-texture.getHeight()/2f);
         }
     }
 
+    public void setDead() {
+        isDead = true;
+    }
+
     public void dispose() {
-        texture.dispose();
+        Gdx.app.log("Pig dispose", "Disposing pig");
+        if (body != null && world != null) {
+            Gdx.app.log("Pig", "Destroying body");
+            while (body.getFixtureList().size > 0){
+                body.destroyFixture(body.getFixtureList().first());
+            }
+            world.destroyBody(body);
+            texture.dispose();
+        }
+
     }
 
     public Vector2 getPosition() {
         return position;
+    }
+
+    public void togglephysics(){
+        if (body.getType() == BodyDef.BodyType.StaticBody){
+            body.setType(BodyDef.BodyType.DynamicBody);
+        }
+        else{
+            body.setType(BodyDef.BodyType.StaticBody);
+        }
     }
 
     public void setPosition(float x, float y) {
@@ -47,7 +97,7 @@ public class Pig {
     }
 
     public boolean isToBeRemoved() {
-        return isAlive;
+        return isDead;
     }
 
     private void checkForClick() {
@@ -57,7 +107,7 @@ public class Pig {
 
             if (clickX >= position.x && clickX <= position.x + width &&
                 clickY >= position.y && clickY <= position.y + height) {
-                isAlive = true;
+                isDead = true;
             }
         }
     }

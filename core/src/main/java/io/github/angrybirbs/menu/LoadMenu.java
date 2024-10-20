@@ -160,13 +160,13 @@ public class LoadMenu extends Menu{
                 float y = position.get(1).asFloat();
                 switch (type) {
                     case "king":
-                        pigs.add(new King((int) x, (int) y));
+                        pigs.add(new King(world,(int) x, (int) y));
                         break;
                     case "normal":
-                        pigs.add(new Normal((int) x, (int) y));
+                        pigs.add(new Normal(world,(int) x, (int) y));
                         break;
                     case "general":
-                        pigs.add(new General((int) x, (int) y));
+                        pigs.add(new General(world,(int) x, (int) y));
                         break;
                 }
             }
