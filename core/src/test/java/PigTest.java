@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import io.github.angrybirbs.entities.Pigs.Normal;
-import io.github.angrybirbs.entities.Pigs.Pig;
+import io.github.angrybirbs.entities.Normal;
+import io.github.angrybirbs.entities.Pig;
 import org.junit.Before;
 import org.junit.Test;
 

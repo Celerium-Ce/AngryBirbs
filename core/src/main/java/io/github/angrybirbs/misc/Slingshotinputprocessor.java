@@ -4,8 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
-import io.github.angrybirbs.entities.Birds.Bird;
+import io.github.angrybirbs.entities.Bird;
 import io.github.angrybirbs.levels.Level;
+import io.github.angrybirbs.misc.Slingshot;
 
 import static io.github.angrybirbs.levels.Level.PPM;
 // Necessary imports

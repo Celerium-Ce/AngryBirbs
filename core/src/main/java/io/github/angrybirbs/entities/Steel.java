@@ -1,9 +1,15 @@
-package io.github.angrybirbs.entities.Materials;
+package io.github.angrybirbs.entities;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Steel extends Material {
+<<<<<<< HEAD
+    public Steel(TiledMapTile tile, float x, float y, World world) {
+        super(tile, x, y,world);
+    }
+}
+=======
     private float health;
 
     public Steel(TiledMapTile tile, float x, float y, World world) {
@@ -30,3 +36,4 @@ public class Steel extends Material {
     }
 }
 
+>>>>>>> parent of b32d36f (refactored code)

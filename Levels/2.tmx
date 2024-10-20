@@ -1,73 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="58" height="33" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="164">
- <tileset firstgid="1" name="BlueBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="../assets/entities/BlueBird.png" width="64" height="64"/>
- </tileset>
- <tileset firstgid="2" name="GeneralPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="../assets/entities/GeneralPig.png" width="64" height="64"/>
- </tileset>
- <tileset firstgid="3" name="iceH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
-  <image source="../assets/entities/iceH.png" width="128" height="16"/>
- </tileset>
- <tileset firstgid="4" name="KingPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="../assets/entities/KingPig.png" width="64" height="64"/>
- </tileset>
- <tileset firstgid="5" name="NormalPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="../assets/entities/NormalPig.png" width="64" height="64"/>
- </tileset>
- <tileset firstgid="6" name="RedBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="../assets/entities/RedBird.png" width="64" height="64"/>
- </tileset>
- <tileset firstgid="7" name="slingshot" tilewidth="64" tileheight="155" tilecount="1" columns="1">
-  <grid orientation="orthogonal" width="128" height="311"/>
-  <image source="../assets/entities/slingshot.png" width="64" height="155"/>
- </tileset>
- <tileset firstgid="8" name="steelH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
-  <image source="../assets/entities/steelH.png" width="128" height="16"/>
- </tileset>
- <tileset firstgid="9" name="steelV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
-  <image source="../assets/entities/steelV.png" width="16" height="128"/>
- </tileset>
- <tileset firstgid="10" name="woodH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
-  <image source="../assets/entities/woodH.png" width="128" height="16"/>
- </tileset>
- <tileset firstgid="11" name="YellowBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
-  <image source="../assets/entities/YellowBird.png" width="64" height="64"/>
- </tileset>
- <tileset firstgid="12" name="woodV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
-  <image source="../assets/entities/woodV.png" width="16" height="128"/>
- </tileset>
- <tileset firstgid="13" name="background" tilewidth="1856" tileheight="1056" tilecount="1" columns="1">
-  <image source="../assets/level.png" width="1856" height="1056"/>
- </tileset>
- <tileset firstgid="14" name="Background" tilewidth="1856" tileheight="1056" tilecount="1" columns="0">
-  <grid orientation="orthogonal" width="32" height="32"/>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="58" height="33" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="82">
+ <tileset firstgid="1" name="Background" tilewidth="2560" tileheight="1440" tilecount="1" columns="0" fillmode="preserve-aspect-fit">
+  <grid orientation="orthogonal" width="1" height="1"/>
   <tile id="0">
-   <image source="../assets/level.png" width="1856" height="1056"/>
+   <image source="../assets/level.png" width="2560" height="1440"/>
   </tile>
  </tileset>
- <tileset firstgid="15" name="IceV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
+ <tileset firstgid="2" name="BlueBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../assets/entities/BlueBird.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="3" name="GeneralPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../assets/entities/GeneralPig.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="4" name="iceH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
+  <image source="../assets/entities/iceH.png" width="128" height="16"/>
+ </tileset>
+ <tileset firstgid="5" name="iceV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
   <image source="../assets/entities/iceV.png" width="16" height="128"/>
  </tileset>
- <objectgroup id="16" name="Background" locked="1">
-  <object id="106" gid="14" x="0" y="1056" width="1856" height="1056"/>
+ <tileset firstgid="6" name="KingPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../assets/entities/KingPig.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="7" name="NormalPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../assets/entities/NormalPig.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="8" name="RedBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../assets/entities/RedBird.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="9" name="slingshot" tilewidth="128" tileheight="311" tilecount="1" columns="1">
+  <image source="../assets/entities/slingshot.png" width="128" height="311"/>
+ </tileset>
+ <tileset firstgid="10" name="steelH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
+  <image source="../assets/entities/steelH.png" width="128" height="16"/>
+ </tileset>
+ <tileset firstgid="11" name="steelV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
+  <image source="../assets/entities/steelV.png" width="16" height="128"/>
+ </tileset>
+ <tileset firstgid="12" name="woodH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
+  <image source="../assets/entities/woodH.png" width="128" height="16"/>
+ </tileset>
+ <tileset firstgid="13" name="YellowBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+  <image source="../assets/entities/YellowBird.png" width="64" height="64"/>
+ </tileset>
+ <tileset firstgid="14" name="woodV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
+  <image source="../assets/entities/woodV.png" width="16" height="128"/>
+ </tileset>
+ <objectgroup id="4" name="Background" locked="1">
+  <object id="23" name="level" gid="1" x="0" y="1056" width="1856" height="1056"/>
  </objectgroup>
- <objectgroup id="13" name="Ground" locked="1">
-  <object id="103" name="Ground" type="Ground" x="0" y="908" width="1856"/>
- </objectgroup>
+ <layer id="6" name="Tile Layer 1" width="58" height="33">
+  <data encoding="base64" compression="zlib">
+   eJztwQENAAAAwqD3T20ON6AAAAAAAAAAeDId6AAB
+  </data>
+ </layer>
  <objectgroup id="5" name="Objects">
-  <object id="138" type="WoodV" gid="12" x="1411.09" y="908" width="16" height="128"/>
-  <object id="139" type="WoodV" gid="12" x="1496.04" y="908" width="16" height="128"/>
-  <object id="140" type="Normal" gid="5" x="1427.74" y="908" width="64" height="64"/>
-  <object id="141" type="Slingshot" gid="7" x="353.19" y="908" width="64" height="155"/>
-  <object id="142" type="Red" gid="6" x="350" y="795" width="64" height="64"/>
-  <object id="144" type="Blue" gid="1" x="190" y="908" width="64" height="64"/>
-  <object id="145" type="Yellow" gid="11" x="110" y="908" width="64" height="64"/>
-  <object id="146" type="Blue" gid="1" x="270" y="908" width="64" height="64"/>
-  <object id="148" type="IceH" gid="3" x="1397.29" y="780" width="128" height="16"/>
-  <object id="159" type="WoodV" gid="12" x="1410.02" y="763.997" width="16" height="128"/>
-  <object id="160" type="WoodV" gid="12" x="1494.97" y="763.997" width="16" height="128"/>
-  <object id="162" type="IceH" gid="3" x="1396.22" y="635.997" width="128" height="16"/>
-  <object id="163" type="General" gid="2" x="1427.37" y="765.648" width="64" height="64"/>
+  <object id="33" type="Blue" gid="2" x="209.539" y="915" width="64" height="64"/>
+  <object id="37" type="Normal" gid="7" x="1485.13" y="915" width="64" height="64"/>
+  <object id="38" type="Red" gid="8" x="286.893" y="915" width="64" height="64"/>
+  <object id="39" type="Yellow" gid="13" x="129.808" y="915" width="64" height="64"/>
+  <object id="70" type="Wood" gid="12" x="1509.12" y="783.672" width="312" height="16"/>
+  <object id="76" type="Wood" gid="14" x="1559.12" y="915" width="16" height="128"/>
+  <object id="81" type="Wood" gid="14" x="1475.12" y="915" width="16" height="128"/>
  </objectgroup>
 </map>

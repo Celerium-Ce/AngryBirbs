@@ -2,6 +2,7 @@ package io.github.angrybirbs.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Color;
 
 
+<<<<<<< HEAD
+=======
+import io.github.angrybirbs.misc.LoadSave;
+>>>>>>> parent of b32d36f (refactored code)
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
@@ -46,6 +51,8 @@ public class Level implements Screen {
 
     protected List<Bird> birds;
     protected List<Pig> pigs;
+    protected List<Material> materials;
+
 
     protected List<Bird> initialBirds;
     protected List<Pig> initialPigs;
@@ -61,13 +68,23 @@ public class Level implements Screen {
     private Slingshot slingshot;
     private Slingshotinputprocessor slingshotinputprocessor;
 
+    private Box2DDebugRenderer debugRenderer;
+    private OrthographicCamera camera;
+
     private BitmapFont font;
 
-    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, int levelNum) {
+    private boolean gameEnded;
+
+    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, List<Material> materials, int levelNum) {
         this.game = game;
+        gameEnded = false;
         this.levelNum = levelNum;
         this.world = world;
         world.setContactListener(new GameContactListener());
+
+        debugRenderer = new Box2DDebugRenderer();
+        camera = new OrthographicCamera(2*Gdx.graphics.getWidth()/PPM, 2*Gdx.graphics.getHeight()/PPM);
+
 
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
@@ -95,10 +112,11 @@ public class Level implements Screen {
 
         this.birds = birds;
         this.pigs = pigs;
+        this.materials = materials;
         slingshotinputprocessor = new Slingshotinputprocessor(slingshot,birds.getFirst(),this);
         this.initialBirds = cloneBirds(birds);
-        this.initialPigs = clonePigs(pigs);
-
+        this.initialPigs = new ArrayList<>(pigs);
+        this.initialPigs=pigs;
         isPaused = false;
 
         stage = new Stage();
@@ -239,25 +257,30 @@ public class Level implements Screen {
     }
 
     private void restartLevel() {
-        Level level = new Level(game,world, initialBirds, initialPigs, levelNum);
+        Level level = new Level(game,world, initialBirds, initialPigs, materials, levelNum);
         game.setScreen(level);
     }
 
     private boolean checkWinCondition() {
-        return pigs.isEmpty();
+
+        return pigs.isEmpty() && !gameEnded;
+
     }
 
     private void showWinScreen() {
+        gameEnded = true;
         showGameEndMenuButtons();
         winImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);
     }
 
     private boolean checkLooseCondition() {
-        return birds.isEmpty();
+
+        return birds.isEmpty() && !gameEnded;
     }
 
     private void showLooseScreen() {
+        gameEnded = true;
         showGameEndMenuButtons();
         looseImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);
@@ -327,13 +350,24 @@ public class Level implements Screen {
             Pig pig = pigIterator.next();
             pig.render(batch);
             if (pig.isToBeRemoved()) {
-                pig.dispose();
+                pig.dispose(world);
                 System.out.println(1);
                 pigIterator.remove();
             }
         }
+        Iterator<Material> materialIterator = materials.iterator();
+        while (materialIterator.hasNext()) {
+            Material material = materialIterator.next();
+            material.render(batch);
+            if (material.isToBeRemoved()) {
+                material.dispose(world);
+                materialIterator.remove();
+            }
+        }
 
         batch.end();
+
+
 
         drawGrid();
 
@@ -348,6 +382,10 @@ public class Level implements Screen {
         world.step(1/60f, 6, 2);
         stage.act(delta);
         stage.draw();
+
+
+        camera.update();
+        debugRenderer.render(world, camera.combined);
 
         if (isPaused) {
             showPauseMenuButtons();
@@ -409,7 +447,7 @@ public class Level implements Screen {
             bird.dispose();
         }
         for (Pig pig : pigs) {
-            pig.dispose();
+            pig.dispose(world);
         }
     }
 }
