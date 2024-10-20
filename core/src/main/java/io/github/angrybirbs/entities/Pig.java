@@ -56,15 +56,14 @@ public class Pig {
     }
 
     public void render(SpriteBatch batch) {
-
-
         position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
-        checkForClick();
 
         if (!isDead) {
+
             TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
             if (region != null) {
-                batch.draw(region, position2.x, position2.y); // Draw using TextureRegion
+                batch.draw(region, position.x-region.getRegionWidth()/2f, position.y-region.getRegionHeight()/2f); // Draw using TextureRegion
+
             }
         }
     }
@@ -92,10 +91,6 @@ public class Pig {
         else {
             Gdx.app.log("Pig", "Body is null");
         }
-        if (texture != null) {
-            texture.dispose();
-            texture = null;
-        }
 
     }
 
@@ -106,7 +101,6 @@ public class Pig {
     public void togglephysics(){
         if (body.getType() == BodyDef.BodyType.StaticBody){
             body.setType(BodyDef.BodyType.DynamicBody);
-
         }
         else{
             body.setType(BodyDef.BodyType.StaticBody);

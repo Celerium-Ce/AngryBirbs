@@ -71,7 +71,6 @@ public class Level implements Screen {
 
     private boolean gameEnded;
 
-    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, int levelNum) {
     public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, List<Material> materials, int levelNum) {
         this.game = game;
         gameEnded = false;
@@ -347,18 +346,24 @@ public class Level implements Screen {
             Pig pig = pigIterator.next();
             pig.render(batch);
             if (pig.isToBeRemoved()) {
-                pig.dispose();
+                pig.dispose(world);
                 System.out.println(1);
                 pigIterator.remove();
             }
         }
-        for (Material material : materials) {
+        Iterator<Material> materialIterator = materials.iterator();
+        while (materialIterator.hasNext()) {
+            Material material = materialIterator.next();
             material.render(batch);
             if (material.isToBeRemoved()) {
-                material.dispose();
+                material.dispose(world);
+                materialIterator.remove();
             }
         }
+
         batch.end();
+
+
 
         drawGrid();
 

@@ -65,7 +65,7 @@ public class Bird {
         if (!isDead) {
             TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
             if (region != null) {
-                batch.draw(region, position.x, position.y); // Draw using TextureRegion
+                batch.draw(region, position.x-region.getRegionWidth()/2f, position.y-region.getRegionHeight()/2f); // Draw using TextureRegion
             }
         }
     }
@@ -87,9 +87,7 @@ public class Bird {
         if (body != null && world != null) {
             world.destroyBody(body);
             body = null;
-
         }
-        texture.dispose();
     }
 
     public Vector2 getPosition() {

@@ -70,7 +70,7 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
+        File levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".tmx"));
 
         if (levelFiles != null) {
@@ -133,11 +133,13 @@ public class LevelsMenu extends Menu {
 
     private Level loadLevelFromFile(String fileName) {
         World world = new World(new Vector2(0, -9.8f), true);
-        fileName = "../Levels/" + fileName;
-        SpriteBatch batch = new SpriteBatch();;
+        fileName = "Levels/" + fileName;
+        SpriteBatch batch = new SpriteBatch();
+        ;
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
         OrthogonalTiledMapRenderer tiledMapRenderer;
-        OrthographicCamera camera = new OrthographicCamera();;
+        OrthographicCamera camera = new OrthographicCamera();
+        ;
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
         ArrayList<Material> materials = new ArrayList<>();
@@ -158,31 +160,31 @@ public class LevelsMenu extends Menu {
                 String entityType = (String) tileObject.getProperties().get("type");
 
                 if ("Red".equals(entityType)) {
-                    birds.add(new Red(world, tile, (int)x, (int)y));
+                    birds.add(new Red(world, tile, (int) x, (int) y));
                     System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
                 } else if ("Blue".equals(entityType)) {
-                    birds.add(new Blue(world, tile, (int)x, (int)y));
+                    birds.add(new Blue(world, tile, (int) x, (int) y));
                     System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
                 } else if ("Yellow".equals(entityType)) {
-                    birds.add(new Yellow(world, tile, (int)x, (int)y));
+                    birds.add(new Yellow(world, tile, (int) x, (int) y));
                     System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
                 } else if ("Normal".equals(entityType)) {
-                    pigs.add(new Normal(world, tile, (int)x, (int)y));
+                    pigs.add(new Normal(world, tile, (int) x, (int) y));
                     System.out.println("Loaded Normal Pig at: (" + x + ", " + y + ")");
                 } else if ("General".equals(entityType)) {
-                    pigs.add(new General(world, tile, (int)x, (int)y));
+                    pigs.add(new General(world, tile, (int) x, (int) y));
                     System.out.println("Loaded General Pig at: (" + x + ", " + y + ")");
                 } else if ("King".equals(entityType)) {
-                    pigs.add(new King(world, tile, (int)x, (int)y));
+                    pigs.add(new King(world, tile, (int) x, (int) y));
                     System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
                 } else if ("Wood".equals(entityType)) {
-                    materials.add(new Wood(tile, (int)x, (int)y));
+                    materials.add(new Wood(tile, (int) x, (int) y,world));
                     System.out.println("Loaded wood at: (" + x + ", " + y + ")");
-                }  else if ("Ice".equals(entityType)) {
-                    materials.add(new Ice(tile, (int)x, (int)y));
+                } else if ("Ice".equals(entityType)) {
+                    materials.add(new Ice(tile, (int) x, (int) y,world));
                     System.out.println("Loaded ice at: (" + x + ", " + y + ")");
-                }  else if ("Steel".equals(entityType)) {
-                    materials.add(new Steel(tile, (int)x, (int)y));
+                } else if ("Steel".equals(entityType)) {
+                    materials.add(new Steel(tile, (int) x, (int) y,world));
                     System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                 }
             }
@@ -190,7 +192,7 @@ public class LevelsMenu extends Menu {
         sortBirds(birds);
         return new Level(game, world, birds, pigs, materials, 1);
 
-        JsonValue pigsData = jsonData.get("pig");
+        /*JsonValue pigsData = jsonData.get("pig");
         for (JsonValue pigEntry : pigsData) {
             String type = pigEntry.name();
             for (JsonValue position : pigEntry) {
@@ -211,6 +213,7 @@ public class LevelsMenu extends Menu {
         }
         sortBirds(birds);
         return new Level(game, world, birds, pigs, levelNum);
+    }*/
     }
     public void sortBirds(ArrayList<Bird> birds) {
         Collections.sort(birds, new Comparator<Bird>() {
@@ -224,7 +227,7 @@ public class LevelsMenu extends Menu {
             }
         });
     }
-    public static void sortBirds(ArrayList<Bird> birds) {
+    /*public static void sortBirds(ArrayList<Bird> birds) {
         Collections.sort(birds, new Comparator<Bird>() {
             @Override
             public int compare(Bird b1, Bird b2) {
@@ -237,5 +240,5 @@ public class LevelsMenu extends Menu {
                 return 0;
             }
         });
-    }
+    }*/
 }

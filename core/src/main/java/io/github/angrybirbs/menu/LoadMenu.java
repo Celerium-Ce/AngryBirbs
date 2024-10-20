@@ -177,13 +177,13 @@ public class LoadMenu extends Menu{
                     pigs.add(new King(world, tile, (int)x, (int)y));
                     System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
                 } else if ("Wood".equals(entityType)) {
-                    materials.add(new Wood(tile, (int)x, (int)y));
+                    materials.add(new Wood(tile, (int)x, (int)y,world));
                     System.out.println("Loaded wood at: (" + x + ", " + y + ")");
                 }  else if ("Ice".equals(entityType)) {
-                    materials.add(new Ice(tile, (int)x, (int)y));
+                    materials.add(new Ice(tile, (int)x, (int)y,world));
                     System.out.println("Loaded ice at: (" + x + ", " + y + ")");
                 }  else if ("Steel".equals(entityType)) {
-                    materials.add(new Steel(tile, (int)x, (int)y));
+                    materials.add(new Steel(tile, (int)x, (int)y,world));
                     System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                 }
             }
