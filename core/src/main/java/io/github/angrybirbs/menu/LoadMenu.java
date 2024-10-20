@@ -3,6 +3,8 @@ package io.github.angrybirbs.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -128,6 +130,8 @@ public class LoadMenu extends Menu{
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
 
+        World world = new World(new Vector2(0, -9.8f), true);
+
         JsonValue birdsData = jsonData.get("bird");
         for (JsonValue birdEntry : birdsData) {
             String type = birdEntry.name();
@@ -136,13 +140,13 @@ public class LoadMenu extends Menu{
                 float y = position.get(1).asFloat();
                 switch (type) {
                     case "red":
-                        birds.add(new Red((int) x, (int) y));
+                        birds.add(new Red(world,(int) x, (int) y));
                         break;
                     case "blue":
-                        birds.add(new Blue((int) x, (int) y));
+                        birds.add(new Blue(world, (int) x, (int) y));
                         break;
                     case "yellow":
-                        birds.add(new Yellow((int) x, (int) y));
+                        birds.add(new Yellow(world, (int) x, (int) y));
                         break;
                 }
             }
@@ -168,6 +172,6 @@ public class LoadMenu extends Menu{
             }
         }
 
-        return new Level(game, birds, pigs, levelNum);
+        return new Level(game,world, birds, pigs, levelNum);
     }
 }

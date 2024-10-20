@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -34,6 +36,11 @@ public class Level implements Screen {
     protected SpriteBatch batch;
     protected ShapeRenderer shapeRenderer;
 
+    public static final float PPM = 100/3f;
+    private World world;
+
+    private Body ground;
+
     private int levelNum;
 
     protected List<Bird> birds;
@@ -55,14 +62,31 @@ public class Level implements Screen {
 
     private BitmapFont font;
 
-    public Level(Main game, List<Bird> birds, List<Pig> pigs, int levelNum) {
+    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, int levelNum) {
         this.game = game;
         this.levelNum = levelNum;
+        this.world = world;
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
         slingshot= new Slingshot(new Vector2(350,300));
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(0/PPM, (150-50)/PPM); //50 offset to alligncorrectly lets see how to fix later
+
+        ground = world.createBody(bodyDef);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(Gdx.graphics.getWidth(), 1);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 1.0f;
+        ground.createFixture(fixtureDef);
+
+        shape.dispose();
 
         this.birds = birds;
         this.pigs = pigs;
@@ -83,7 +107,7 @@ public class Level implements Screen {
     private List<Bird> cloneBirds(List<Bird> birds) {
         List<Bird> clonedBirds = new ArrayList<>();
         for (Bird bird : birds) {
-            clonedBirds.add(new Bird(bird.getTexturePath(), bird.getPosition().x, bird.getPosition().y));
+            clonedBirds.add(new Bird(world ,bird.getTexturePath(), bird.getPosition().x, bird.getPosition().y));
         }
         return clonedBirds;
     }
@@ -210,7 +234,7 @@ public class Level implements Screen {
     }
 
     private void restartLevel() {
-        Level level = new Level(game, initialBirds, initialPigs, levelNum);
+        Level level = new Level(game,world, initialBirds, initialPigs, levelNum);
         game.setScreen(level);
     }
 
@@ -311,15 +335,17 @@ public class Level implements Screen {
 
         if (slingshotinputprocessor.activebird == null && !birds.isEmpty()) {
             slingshotinputprocessor.setActiveBird(birds.get(0));
-        }
-        //Gdx.app.log("Level", "Active bird: " + slingshotinputprocessor.activebird);
-        if (!isPaused && slingshotinputprocessor.activebird != null) {
             slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
         }
+        //Gdx.app.log("Level", "Active bird: " + slingshotinputprocessor.activebird);
+        /*if (!isPaused && slingshotinputprocessor.activebird != null) {
+
+        }*/
         //Gdx.app.log("Level", "Active bird position: " + slingshotinputprocessor.activebird.getPosition());
         slingshot.renderDraggableArea(); // Highlight draggable area
         slingshot.render(delta);
         slingshot.renderTrajectory();
+        world.step(1/60f, 6, 2);
         stage.act(delta);
         stage.draw();
 
@@ -335,40 +361,31 @@ public class Level implements Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
+    public void resize(int width, int height) {stage.getViewport().update(width, height, true);}
 
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-    }
+    public void hide() {}
 
     private void drawGrid() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.BLACK);
 
-        // Draw vertical lines
         for (int x = 0; x < Gdx.graphics.getWidth(); x += 50) {
             shapeRenderer.line(x, 0, x, Gdx.graphics.getHeight());
         }
 
-        // Draw horizontal lines
         for (int y = 0; y < Gdx.graphics.getHeight(); y += 50) {
             shapeRenderer.line(0, y, Gdx.graphics.getWidth(), y);
         }
 
         shapeRenderer.end();
 
-
-        // Draw numbers
         batch.begin();
         font.setColor(Color.BLACK);
         for (int x = 0; x < Gdx.graphics.getWidth(); x += 50) {

@@ -59,7 +59,7 @@ public class Slingshot {
     public void renderDraggableArea() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.circle(origin.x, origin.y, 500); // Draw a circle with radius 50
+        shapeRenderer.circle(origin.x, origin.y, 100); // Draw a circle with radius 50
         shapeRenderer.end();
     }
 
@@ -70,8 +70,8 @@ public class Slingshot {
         shapeRenderer.setColor(Color.BLUE);
 
         Vector2 launchVector = getLaunchVector();
-        float velocityX = launchVector.x * 0.3f;
-        float velocityY = launchVector.y * 0.3f;
+        float velocityX = launchVector.x * 0.7f;
+        float velocityY = launchVector.y * 0.7f;
         float gravity = -9.8f; // Adjust gravity as needed
 
         Vector2 currentPosition = new Vector2(origin);
@@ -86,5 +86,12 @@ public class Slingshot {
 
     public Vector2 getOrigin() {
         return origin;
+    }
+
+
+    public void dispose() {
+        texture.dispose();
+        shapeRenderer.dispose();
+        batch.dispose();
     }
 }
