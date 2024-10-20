@@ -13,6 +13,7 @@ public class Pig {
     private String texturePath;
     private Body body;
     private World world;
+    private Fixture fixture;
 
     protected Vector2 position;
     protected float width, height;
@@ -43,9 +44,10 @@ public class Pig {
         fixtureDef.restitution = 0.1f;
 
 
-        Fixture fixture=body.createFixture(fixtureDef);
+        fixture=body.createFixture(fixtureDef);
         fixture.setUserData(this);
         body.setUserData(this);
+        //body.destroyFixture(fixture);
         shape.dispose();
         //togglephysics();
         this.isDead = false;
@@ -66,17 +68,29 @@ public class Pig {
         isDead = true;
     }
 
-    public void dispose() {
-        Gdx.app.log("Pig dispose", "Disposing pig");
+    // Pig.java
+    public void dispose(World world) {
+        Gdx.app.log("World", world.toString());
+        Gdx.app.log("Pig", body.toString());
         if (body != null && world != null) {
             Gdx.app.log("Pig", "Destroying body");
-            while (body.getFixtureList().size > 0){
-                body.destroyFixture(body.getFixtureList().first());
-            }
+            body.destroyFixture(fixture);
             world.destroyBody(body);
-            texture.dispose();
+            body = null;
+            if (body != null) {
+                Gdx.app.log("Pig", "Body is not null");
+            }
+            else {
+                Gdx.app.log("Pig", "Body is null");
+            }
         }
-
+        else {
+            Gdx.app.log("Pig", "Body is null");
+        }
+        if (texture != null) {
+            texture.dispose();
+            texture = null;
+        }
     }
 
     public Vector2 getPosition() {
@@ -86,6 +100,7 @@ public class Pig {
     public void togglephysics(){
         if (body.getType() == BodyDef.BodyType.StaticBody){
             body.setType(BodyDef.BodyType.DynamicBody);
+
         }
         else{
             body.setType(BodyDef.BodyType.StaticBody);

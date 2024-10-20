@@ -79,6 +79,11 @@ public class Bird {
     }
 
     public void dispose() {
+        if (body != null && world != null) {
+            world.destroyBody(body);
+            body = null;
+
+        }
         texture.dispose();
     }
 

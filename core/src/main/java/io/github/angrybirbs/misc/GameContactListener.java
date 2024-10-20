@@ -32,13 +32,23 @@ public class GameContactListener implements ContactListener {
             Object userDataB = contact.getFixtureB().getUserData();
 
             if (userDataB instanceof Pig) {
-                Gdx.app.log("GameContactListener", "Object B");
+                //Gdx.app.log("GameContactListener", "Object B");
                 ((Pig) userDataB).setDead();
             }
             if (userDataA instanceof Pig) {
-                Gdx.app.log("GameContactListener", "Object A");
+                //Gdx.app.log("GameContactListener", "Object A");
                 ((Pig) userDataA).setDead();
             }
+
+            /*if (userDataB instanceof Bird) {
+                //Gdx.app.log("GameContactListener", "Object B");
+                ((Bird) userDataB).setDead();
+            }
+
+            if (userDataA instanceof Bird) {
+                //Gdx.app.log("GameContactListener", "Object A");
+                ((Bird) userDataA).setDead();
+            }*/
         }
         //Gdx.app.log("GameContactListener", "beginContact");
     }

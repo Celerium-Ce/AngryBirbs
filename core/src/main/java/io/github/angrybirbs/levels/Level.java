@@ -2,6 +2,7 @@ package io.github.angrybirbs.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -61,6 +62,9 @@ public class Level implements Screen {
     private Slingshot slingshot;
     private Slingshotinputprocessor slingshotinputprocessor;
 
+    private Box2DDebugRenderer debugRenderer;
+    private OrthographicCamera camera;
+
     private BitmapFont font;
 
     public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, int levelNum) {
@@ -68,6 +72,10 @@ public class Level implements Screen {
         this.levelNum = levelNum;
         this.world = world;
         world.setContactListener(new GameContactListener());
+
+        debugRenderer = new Box2DDebugRenderer();
+        camera = new OrthographicCamera(2*Gdx.graphics.getWidth()/PPM, 2*Gdx.graphics.getHeight()/PPM);
+
 
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
@@ -97,8 +105,8 @@ public class Level implements Screen {
         this.pigs = pigs;
         slingshotinputprocessor = new Slingshotinputprocessor(slingshot,birds.getFirst(),this);
         this.initialBirds = cloneBirds(birds);
-        this.initialPigs = clonePigs(pigs);
-
+        this.initialPigs = new ArrayList<>(pigs);
+        this.initialPigs=pigs;
         isPaused = false;
 
         stage = new Stage();
@@ -327,7 +335,7 @@ public class Level implements Screen {
             Pig pig = pigIterator.next();
             pig.render(batch);
             if (pig.isToBeRemoved()) {
-                pig.dispose();
+                pig.dispose(world);
                 pigIterator.remove();
             }
         }
@@ -347,6 +355,10 @@ public class Level implements Screen {
         world.step(1/60f, 6, 2);
         stage.act(delta);
         stage.draw();
+
+
+        camera.update();
+        debugRenderer.render(world, camera.combined);
 
         if (isPaused) {
             showPauseMenuButtons();
@@ -408,7 +420,7 @@ public class Level implements Screen {
             bird.dispose();
         }
         for (Pig pig : pigs) {
-            pig.dispose();
+            pig.dispose(world);
         }
     }
 }
