@@ -40,7 +40,7 @@ public class Pig {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 10.0f;
-        fixtureDef.friction = 1000f;
+        fixtureDef.friction = 10f;
         fixtureDef.restitution = 0.1f;
 
 

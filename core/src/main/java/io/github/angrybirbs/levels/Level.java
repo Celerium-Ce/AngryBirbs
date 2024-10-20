@@ -67,8 +67,11 @@ public class Level implements Screen {
 
     private BitmapFont font;
 
+    private boolean gameEnded;
+
     public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, int levelNum) {
         this.game = game;
+        gameEnded = false;
         this.levelNum = levelNum;
         this.world = world;
         world.setContactListener(new GameContactListener());
@@ -252,20 +255,25 @@ public class Level implements Screen {
     }
 
     private boolean checkWinCondition() {
-        return pigs.isEmpty();
+
+        return pigs.isEmpty() && !gameEnded;
+
     }
 
     private void showWinScreen() {
+        gameEnded = true;
         showGameEndMenuButtons();
         winImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);
     }
 
     private boolean checkLooseCondition() {
-        return birds.isEmpty();
+
+        return birds.isEmpty() && !gameEnded;
     }
 
     private void showLooseScreen() {
+        gameEnded = true;
         showGameEndMenuButtons();
         looseImage.setVisible(true);
         Gdx.input.setInputProcessor(stage);

@@ -45,6 +45,7 @@ public class Slingshot {
         return isDragging;
     }
 
+
     public void render(float delta) {
         batch.begin();
         batch.draw(texture, origin.x-texture.getWidth()/4f, origin.y-texture.getHeight()/2f, texture.getWidth()/2f, texture.getHeight()/2f);
