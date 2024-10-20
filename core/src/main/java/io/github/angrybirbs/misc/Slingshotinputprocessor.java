@@ -55,8 +55,11 @@ public class Slingshotinputprocessor implements InputProcessor {
             if (activebird != null) {
                 activebird.togglephysics();
                 Vector2 launchVector = slingshot.getLaunchVector();
+                launchVector.scl(0.3f);
                 activebird.getBody().applyLinearImpulse(launchVector, activebird.getBody().getWorldCenter(), true);
+
             }
+            activebird=null;
             slingshot.release();
             return true;
         }

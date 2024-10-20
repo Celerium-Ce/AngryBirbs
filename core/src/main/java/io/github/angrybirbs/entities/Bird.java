@@ -43,7 +43,10 @@ public class Bird {
         fixtureDef.shape = shape;
         fixtureDef.density = 1.0f;
 
-        body.createFixture(fixtureDef);
+
+        Fixture fixture=body.createFixture(fixtureDef);
+        fixture.setUserData(this);
+        body.setUserData(this);
         //body.setAwake(false);
         //body.setLinearVelocity(0, 0);  // Prevent movement
         //body.setAngularVelocity(0);    // Prevent rotation
@@ -56,7 +59,6 @@ public class Bird {
 
     public void render(SpriteBatch batch) {
         position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
-        checkForClick();
 
         if (!isAlive) {
             batch.draw(texture, position.x-texture.getWidth()/2f, position.y-texture.getHeight()/2f);
@@ -70,6 +72,10 @@ public class Bird {
         else{
             body.setType(BodyDef.BodyType.StaticBody);
         }
+    }
+
+    public void setDead(){
+        isAlive = true;
     }
 
     public void dispose() {

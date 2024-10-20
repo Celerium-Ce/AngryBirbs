@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.Color;
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
+import io.github.angrybirbs.misc.GameContactListener;
 import io.github.angrybirbs.misc.Slingshot;
 import io.github.angrybirbs.misc.Slingshotinputprocessor;
 
@@ -66,6 +67,8 @@ public class Level implements Screen {
         this.game = game;
         this.levelNum = levelNum;
         this.world = world;
+        world.setContactListener(new GameContactListener());
+
         backgroundTexture = new Texture(Gdx.files.internal("level.png"));
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
@@ -74,7 +77,7 @@ public class Level implements Screen {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0/PPM, (150-50)/PPM); //50 offset to alligncorrectly lets see how to fix later
+        bodyDef.position.set(0/PPM, (150-50)/PPM); //50 offset to allign correctly lets see how to fix later
 
         ground = world.createBody(bodyDef);
 
@@ -84,8 +87,9 @@ public class Level implements Screen {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1.0f;
-        ground.createFixture(fixtureDef);
-
+        Fixture fixture = ground.createFixture(fixtureDef);
+        ground.setUserData("ground");
+        fixture.setUserData("ground");
         shape.dispose();
 
         this.birds = birds;
@@ -311,8 +315,6 @@ public class Level implements Screen {
             if (bird.isToBeRemoved()) {
                 bird.dispose();
                 birdIterator.remove();
-                //temp bird remover
-                //some crash error here
                 if (slingshotinputprocessor.activebird == bird) {
                     slingshotinputprocessor.setActiveBird(null);
                 }
@@ -334,15 +336,11 @@ public class Level implements Screen {
         drawGrid();
 
         if (slingshotinputprocessor.activebird == null && !birds.isEmpty()) {
-            slingshotinputprocessor.setActiveBird(birds.get(0));
+            slingshotinputprocessor.setActiveBird(birds.iterator().next());
             slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
         }
-        //Gdx.app.log("Level", "Active bird: " + slingshotinputprocessor.activebird);
-        /*if (!isPaused && slingshotinputprocessor.activebird != null) {
 
-        }*/
-        //Gdx.app.log("Level", "Active bird position: " + slingshotinputprocessor.activebird.getPosition());
-        slingshot.renderDraggableArea(); // Highlight draggable area
+        slingshot.renderDraggableArea();
         slingshot.render(delta);
         slingshot.renderTrajectory();
         world.step(1/60f, 6, 2);

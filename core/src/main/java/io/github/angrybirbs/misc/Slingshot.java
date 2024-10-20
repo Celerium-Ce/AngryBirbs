@@ -67,7 +67,7 @@ public class Slingshot {
         if (!isDragging) return;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.BLUE);
+        shapeRenderer.setColor(Color.BLACK);
 
         Vector2 launchVector = getLaunchVector();
         float velocityX = launchVector.x * 0.7f;
