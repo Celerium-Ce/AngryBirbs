@@ -21,6 +21,8 @@ import io.github.angrybirbs.levels.Level;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class LevelsMenu extends Menu {
     private Texture backgroundTexture;
@@ -59,7 +61,7 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".json"));
 
         if (levelFiles != null) {
@@ -170,7 +172,21 @@ public class LevelsMenu extends Menu {
                 }
             }
         }
-
+        sortBirds(birds);
         return new Level(game, world, birds, pigs, levelNum);
+    }
+    public static void sortBirds(ArrayList<Bird> birds) {
+        Collections.sort(birds, new Comparator<Bird>() {
+            @Override
+            public int compare(Bird b1, Bird b2) {
+                // First compare by x position (max x first)
+                int xComparison = Float.compare(b2.getPosition().x, b1.getPosition().x);
+                if (xComparison != 0) {
+                    return xComparison; // If x positions are different, sort by x
+                }
+                // If x positions are the same, compare by y position (min y first)
+                return 0;
+            }
+        });
     }
 }
