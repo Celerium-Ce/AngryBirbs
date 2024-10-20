@@ -112,7 +112,7 @@ public class Level implements Screen {
     private List<Bird> cloneBirds(List<Bird> birds) {
         List<Bird> clonedBirds = new ArrayList<>();
         for (Bird bird : birds) {
-            clonedBirds.add(new Bird(world ,bird.getTexturePath(), bird.getPosition().x, bird.getPosition().y));
+            clonedBirds.add(new Bird(world ,bird.tile, bird.getPosition().x, bird.getPosition().y));
         }
         return clonedBirds;
     }
@@ -120,7 +120,7 @@ public class Level implements Screen {
     private List<Pig> clonePigs(List<Pig> pigs) {
         List<Pig> clonedPigs = new ArrayList<>();
         for (Pig pig : pigs) {
-            clonedPigs.add(new Pig(world,pig.getTexturePath(), pig.getPosition().x, pig.getPosition().y));
+            clonedPigs.add(new Pig(world,pig.tile, pig.getPosition().x, pig.getPosition().y));
         }
         return clonedPigs;
     }
@@ -166,12 +166,12 @@ public class Level implements Screen {
                 hidePauseMenuButtons();
             }
         });
-        nextButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                loadNextLevel();
-            }
-        });
+//        nextButton.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeEvent event, Actor actor) {
+//                loadNextLevel();
+//            }
+//        });
         restartButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -208,18 +208,18 @@ public class Level implements Screen {
         stage.addActor(looseImage);
     }
 
-    private void loadNextLevel() {
-        int nextLevelNum = this.levelNum + 1;
-
-        File nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
-
-        if (nextLevelFile.exists()) {
-            Level nextLevel = LevelsMenu.createLevelFromJson(nextLevelFile, nextLevelNum);
-            game.setScreen(nextLevel);
-        } else {
-            game.setScreen(new LevelsMenu(game));
-        }
-    }
+//    private void loadNextLevel() {
+//        int nextLevelNum = this.levelNum + 1;
+//
+//        File nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
+//
+//        if (nextLevelFile.exists()) {
+//            Level nextLevel = LevelsMenu.createLevelFromJson(nextLevelFile, nextLevelNum);
+//            game.setScreen(nextLevel);
+//        } else {
+//            game.setScreen(new LevelsMenu(game));
+//        }
+//    }
 
     private void showGameEndMenuButtons() {
         float centerX = Gdx.graphics.getWidth() / 2f;
@@ -328,6 +328,7 @@ public class Level implements Screen {
             pig.render(batch);
             if (pig.isToBeRemoved()) {
                 pig.dispose();
+                System.out.println(1);
                 pigIterator.remove();
             }
         }

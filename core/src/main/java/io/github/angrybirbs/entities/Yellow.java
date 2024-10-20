@@ -1,12 +1,13 @@
 package io.github.angrybirbs.entities;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Yellow extends Bird {
     private int power;
 
-    public Yellow(World world, int x, int y) {
-        super(world,"entities/YellowBird.png",x,y);
+    public Yellow(World world, TiledMapTile tile, int x, int y) {
+        super(world,tile,x,y);
         this.power = 10;
     }
 
