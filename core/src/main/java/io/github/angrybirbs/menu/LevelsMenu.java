@@ -70,7 +70,7 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".tmx"));
 
         if (levelFiles != null) {
@@ -133,17 +133,18 @@ public class LevelsMenu extends Menu {
 
     private Level loadLevelFromFile(String fileName) {
         World world = new World(new Vector2(0, -9.8f), true);
-        fileName = "Levels/" + fileName;
+        fileName = "../Levels/" + fileName;
         SpriteBatch batch = new SpriteBatch();;
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
         OrthogonalTiledMapRenderer tiledMapRenderer;
         OrthographicCamera camera = new OrthographicCamera();;
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
+        ArrayList<Material> materials = new ArrayList<>();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        MapLayer layer = tiledMap.getLayers().get("Objects"); // Change to your object layer name
+        MapLayer layer = tiledMap.getLayers().get("Objects");
         for (MapObject obj : layer.getObjects()) {
             if (obj instanceof TiledMapTileMapObject) {
                 TiledMapTileMapObject tileObject = (TiledMapTileMapObject) obj;
@@ -174,23 +175,30 @@ public class LevelsMenu extends Menu {
                 } else if ("King".equals(entityType)) {
                     pigs.add(new King(world, tile, (int)x, (int)y));
                     System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
+                } else if ("Wood".equals(entityType)) {
+                    materials.add(new Wood(tile, (int)x, (int)y));
+                    System.out.println("Loaded wood at: (" + x + ", " + y + ")");
+                }  else if ("Ice".equals(entityType)) {
+                    materials.add(new Ice(tile, (int)x, (int)y));
+                    System.out.println("Loaded ice at: (" + x + ", " + y + ")");
+                }  else if ("Steel".equals(entityType)) {
+                    materials.add(new Steel(tile, (int)x, (int)y));
+                    System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                 }
             }
         }
         sortBirds(birds);
-        return new Level(game, world, birds, pigs, 1);
+        return new Level(game, world, birds, pigs, materials, 1);
 
     }
     public void sortBirds(ArrayList<Bird> birds) {
         Collections.sort(birds, new Comparator<Bird>() {
             @Override
             public int compare(Bird b1, Bird b2) {
-                // First compare by x position (max x first)
                 int xComparison = Float.compare(b2.getPosition().x, b1.getPosition().x);
                 if (xComparison != 0) {
-                    return xComparison; // If x positions are different, sort by x
+                    return xComparison;
                 }
-                // If x positions are the same, compare by y position (min y first)
                 return 0;
             }
         });

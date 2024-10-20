@@ -134,17 +134,18 @@ public class LoadMenu extends Menu{
 
     private Level loadLevelFromFile(String fileName) {
         World world = new World(new Vector2(0, -9.8f), true);
-        fileName = "Levels/" + fileName;
+        fileName = "../Levels/" + fileName;
         SpriteBatch batch = new SpriteBatch();;
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
         OrthogonalTiledMapRenderer tiledMapRenderer;
         OrthographicCamera camera = new OrthographicCamera();;
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
+        ArrayList<Material> materials = new ArrayList<>();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        MapLayer layer = tiledMap.getLayers().get("Objects"); // Change to your object layer name
+        MapLayer layer = tiledMap.getLayers().get("Objects");
         for (MapObject obj : layer.getObjects()) {
             if (obj instanceof TiledMapTileMapObject) {
                 TiledMapTileMapObject tileObject = (TiledMapTileMapObject) obj;
@@ -175,11 +176,20 @@ public class LoadMenu extends Menu{
                 } else if ("King".equals(entityType)) {
                     pigs.add(new King(world, tile, (int)x, (int)y));
                     System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
+                } else if ("Wood".equals(entityType)) {
+                    materials.add(new Wood(tile, (int)x, (int)y));
+                    System.out.println("Loaded wood at: (" + x + ", " + y + ")");
+                }  else if ("Ice".equals(entityType)) {
+                    materials.add(new Ice(tile, (int)x, (int)y));
+                    System.out.println("Loaded ice at: (" + x + ", " + y + ")");
+                }  else if ("Steel".equals(entityType)) {
+                    materials.add(new Steel(tile, (int)x, (int)y));
+                    System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                 }
             }
         }
         sortBirds(birds);
-        return new Level(game, world, birds, pigs, 1);
+        return new Level(game, world, birds, pigs, materials, 1);
 
     }
     public void sortBirds(ArrayList<Bird> birds) {

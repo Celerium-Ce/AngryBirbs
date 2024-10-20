@@ -46,6 +46,8 @@ public class Level implements Screen {
 
     protected List<Bird> birds;
     protected List<Pig> pigs;
+    protected List<Material> materials;
+
 
     protected List<Bird> initialBirds;
     protected List<Pig> initialPigs;
@@ -63,7 +65,7 @@ public class Level implements Screen {
 
     private BitmapFont font;
 
-    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, int levelNum) {
+    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, List<Material> materials, int levelNum) {
         this.game = game;
         this.levelNum = levelNum;
         this.world = world;
@@ -95,6 +97,7 @@ public class Level implements Screen {
 
         this.birds = birds;
         this.pigs = pigs;
+        this.materials = materials;
         slingshotinputprocessor = new Slingshotinputprocessor(slingshot,birds.getFirst(),this);
         this.initialBirds = cloneBirds(birds);
         this.initialPigs = clonePigs(pigs);
@@ -239,7 +242,7 @@ public class Level implements Screen {
     }
 
     private void restartLevel() {
-        Level level = new Level(game,world, initialBirds, initialPigs, levelNum);
+        Level level = new Level(game,world, initialBirds, initialPigs, materials, levelNum);
         game.setScreen(level);
     }
 
@@ -332,7 +335,12 @@ public class Level implements Screen {
                 pigIterator.remove();
             }
         }
-
+        for (Material material : materials) {
+            material.render(batch);
+            if (material.isToBeRemoved()) {
+                material.dispose();
+            }
+        }
         batch.end();
 
         drawGrid();
@@ -341,6 +349,7 @@ public class Level implements Screen {
             slingshotinputprocessor.setActiveBird(birds.iterator().next());
             slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
         }
+
 
         slingshot.renderDraggableArea();
         slingshot.render(delta);
