@@ -1,8 +1,17 @@
 package io.github.angrybirbs.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -20,6 +29,8 @@ import io.github.angrybirbs.levels.Level;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class LoadMenu extends Menu{
 
@@ -92,7 +103,7 @@ public class LoadMenu extends Menu{
                     public void changed(ChangeEvent event, Actor actor) {
                         String levelNum = saveButton.getText().toString();
 
-                        Level level = createLevelFromJson(file, Integer.parseInt(levelNum));
+                        Level level = loadLevelFromFile(file.getName());
                         game.setScreen(level);
                         System.out.println("Loading save: " + file.getName());
                     }
@@ -121,57 +132,77 @@ public class LoadMenu extends Menu{
         }
     }
 
-    private Level createLevelFromJson(File file, int levelNum) {
-        Json json = new Json();
-
-        String jsonString = Gdx.files.absolute(file.getAbsolutePath()).readString();
-        JsonValue jsonData = json.fromJson(null, jsonString);
-
+    private Level loadLevelFromFile(String fileName) {
+        World world = new World(new Vector2(0, -9.8f), true);
+        fileName = "../Levels/" + fileName;
+        SpriteBatch batch = new SpriteBatch();;
+        TiledMap tiledMap = new TmxMapLoader().load(fileName);
+        OrthogonalTiledMapRenderer tiledMapRenderer;
+        OrthographicCamera camera = new OrthographicCamera();;
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
+        ArrayList<Material> materials = new ArrayList<>();
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        World world = new World(new Vector2(0, -9.8f), true);
+        MapLayer layer = tiledMap.getLayers().get("Objects");
+        for (MapObject obj : layer.getObjects()) {
+            if (obj instanceof TiledMapTileMapObject) {
+                TiledMapTileMapObject tileObject = (TiledMapTileMapObject) obj;
 
-        JsonValue birdsData = jsonData.get("bird");
-        for (JsonValue birdEntry : birdsData) {
-            String type = birdEntry.name();
-            for (JsonValue position : birdEntry) {
-                float x = position.get(0).asFloat();
-                float y = position.get(1).asFloat();
-                switch (type) {
-                    case "red":
-                        birds.add(new Red(world,(int) x, (int) y));
-                        break;
-                    case "blue":
-                        birds.add(new Blue(world, (int) x, (int) y));
-                        break;
-                    case "yellow":
-                        birds.add(new Yellow(world, (int) x, (int) y));
-                        break;
+                // Get the position of the tile
+                float x = tileObject.getX();
+                float y = tileObject.getY();
+                TiledMapTile tile = tileObject.getTile();
+
+                // Check the properties to determine the type of object
+                String entityType = (String) tileObject.getProperties().get("type");
+
+                if ("Red".equals(entityType)) {
+                    birds.add(new Red(world, tile, (int)x, (int)y));
+                    System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
+                } else if ("Blue".equals(entityType)) {
+                    birds.add(new Blue(world, tile, (int)x, (int)y));
+                    System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
+                } else if ("Yellow".equals(entityType)) {
+                    birds.add(new Yellow(world, tile, (int)x, (int)y));
+                    System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
+                } else if ("Normal".equals(entityType)) {
+                    pigs.add(new Normal(world, tile, (int)x, (int)y));
+                    System.out.println("Loaded Normal Pig at: (" + x + ", " + y + ")");
+                } else if ("General".equals(entityType)) {
+                    pigs.add(new General(world, tile, (int)x, (int)y));
+                    System.out.println("Loaded General Pig at: (" + x + ", " + y + ")");
+                } else if ("King".equals(entityType)) {
+                    pigs.add(new King(world, tile, (int)x, (int)y));
+                    System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
+                } else if ("Wood".equals(entityType)) {
+                    materials.add(new Wood(tile, (int)x, (int)y));
+                    System.out.println("Loaded wood at: (" + x + ", " + y + ")");
+                }  else if ("Ice".equals(entityType)) {
+                    materials.add(new Ice(tile, (int)x, (int)y));
+                    System.out.println("Loaded ice at: (" + x + ", " + y + ")");
+                }  else if ("Steel".equals(entityType)) {
+                    materials.add(new Steel(tile, (int)x, (int)y));
+                    System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                 }
             }
         }
+        sortBirds(birds);
+        return new Level(game, world, birds, pigs, materials, 1);
 
-        JsonValue pigsData = jsonData.get("pig");
-        for (JsonValue pigEntry : pigsData) {
-            String type = pigEntry.name();
-            for (JsonValue position : pigEntry) {
-                float x = position.get(0).asFloat();
-                float y = position.get(1).asFloat();
-                switch (type) {
-                    case "king":
-                        pigs.add(new King(world,(int) x, (int) y));
-                        break;
-                    case "normal":
-                        pigs.add(new Normal(world,(int) x, (int) y));
-                        break;
-                    case "general":
-                        pigs.add(new General(world,(int) x, (int) y));
-                        break;
-                }
-            }
-        }
-
-        return new Level(game,world, birds, pigs, levelNum);
     }
-}
+    public void sortBirds(ArrayList<Bird> birds) {
+        Collections.sort(birds, new Comparator<Bird>() {
+            @Override
+            public int compare(Bird b1, Bird b2) {
+                // First compare by x position (max x first)
+                int xComparison = Float.compare(b2.getPosition().x, b1.getPosition().x);
+                if (xComparison != 0) {
+                    return xComparison; // If x positions are different, sort by x
+                }
+                // If x positions are the same, compare by y position (min y first)
+                return 0;
+            }
+        });
+    }}

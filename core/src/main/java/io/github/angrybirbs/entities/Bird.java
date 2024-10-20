@@ -3,6 +3,8 @@ package io.github.angrybirbs.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -16,19 +18,19 @@ public class Bird {
 
     protected Vector2 position;
     protected float width, height;
-
+    public TiledMapTile tile;
     private boolean isDead;
 
 
-    public Bird(World world, String texturePath, float x, float y) {
+    public Bird(World world, TiledMapTile tile, float x, float y) {
         this.world=world;
 
-        this.texturePath = texturePath;
-        this.texture = new Texture(Gdx.files.internal(this.texturePath));
+        this.tile = tile;
 
         this.position = new Vector2(x, y);
-        this.width = texture.getWidth();
-        this.height = texture.getHeight();
+
+        this.width = tile.getTextureRegion().getRegionWidth();
+        this.height = tile.getTextureRegion().getRegionHeight();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -61,7 +63,10 @@ public class Bird {
         position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
 
         if (!isDead) {
-            batch.draw(texture, position.x-texture.getWidth()/2f, position.y-texture.getHeight()/2f);
+            TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
+            if (region != null) {
+                batch.draw(region, position.x, position.y); // Draw using TextureRegion
+            }
         }
     }
 
@@ -110,8 +115,6 @@ public class Bird {
             }
         }
     }
-
-
 
     public Body getBody() {
         return body;

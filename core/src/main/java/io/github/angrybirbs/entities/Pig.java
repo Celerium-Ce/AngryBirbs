@@ -3,30 +3,33 @@ package io.github.angrybirbs.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM;
 
 public class Pig {
-    protected Texture texture;
-    private String texturePath;
+    public TiledMapTile tile;
     private Body body;
     private World world;
     private Fixture fixture;
 
     protected Vector2 position;
+    protected Vector2 position2;
     protected float width, height;
 
     private boolean isDead;
 
-    public Pig(World world,String texturePath, float x, float y) {
-        this.texturePath = texturePath;
-        this.texture = new Texture(Gdx.files.internal(this.texturePath));
+    public Pig(World world,TiledMapTile tile, float x, float y) {
+        this.tile = tile;
+
 
         this.position = new Vector2(x, y);
-        this.width = texture.getWidth();
-        this.height = texture.getHeight();
+        this.position2 = new Vector2(x, y);
+        this.width = tile.getTextureRegion().getRegionWidth();
+        this.height = tile.getTextureRegion().getRegionHeight();
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -47,7 +50,6 @@ public class Pig {
         fixture=body.createFixture(fixtureDef);
         fixture.setUserData(this);
         body.setUserData(this);
-        //body.destroyFixture(fixture);
         shape.dispose();
         //togglephysics();
         this.isDead = false;
@@ -60,7 +62,10 @@ public class Pig {
         checkForClick();
 
         if (!isDead) {
-            batch.draw(texture, position.x-texture.getWidth()/2f, position.y-texture.getHeight()/2f);
+            TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
+            if (region != null) {
+                batch.draw(region, position2.x, position2.y); // Draw using TextureRegion
+            }
         }
     }
 
@@ -91,6 +96,7 @@ public class Pig {
             texture.dispose();
             texture = null;
         }
+
     }
 
     public Vector2 getPosition() {
@@ -127,7 +133,4 @@ public class Pig {
         }
     }
 
-    public String getTexturePath() {
-        return this.texturePath;
-    }
 }

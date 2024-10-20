@@ -1,12 +1,13 @@
 package io.github.angrybirbs.entities;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class King extends Pig {
     private int power;
 
-    public King(World world, int x, int y) {
-        super(world,"entities/KingPig.png",x,y);
+    public King(World world, TiledMapTile tile, int x, int y) {
+        super(world,tile,x,y);
         this.power = 10;
     }
 
