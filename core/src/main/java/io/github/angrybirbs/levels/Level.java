@@ -187,7 +187,9 @@ public class Level implements Screen {
         int nextLevelNum = this.levelNum + 1;
 
         File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
-
+        if (!(nextLevelFile.exists())) {
+            nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
+        }
         if (nextLevelFile.exists()) {
             Level nextLevel = LevelsMenu.createLevelFromJson(nextLevelFile, nextLevelNum);
             game.setScreen(nextLevel);
