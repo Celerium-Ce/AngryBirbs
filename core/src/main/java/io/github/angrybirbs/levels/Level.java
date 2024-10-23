@@ -200,17 +200,17 @@ public class Level implements Screen {
         float centerX = Gdx.graphics.getWidth() / 2f;
         float centerY = Gdx.graphics.getHeight() / 2f;
 
-        menuButton.setPosition(centerX - menuButton.getWidth()/2f - 50, centerY);
+        menuButton.setPosition(centerX - menuButton.getWidth()/2f - 60, centerY);
         stage.addActor(menuButton);
 
-        //nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
-        //stage.addActor(nextButton);
+        nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
+        stage.addActor(nextButton);
 
-        restartButton.setPosition(centerX - restartButton.getWidth()/2f + 50, centerY);
+        restartButton.setPosition(centerX - restartButton.getWidth()/2f + 60, centerY);
         stage.addActor(restartButton);
 
-        //saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
-        //stage.addActor(saveButton);
+        saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
+        stage.addActor(saveButton);
     }
 
     private void restartLevel() {
