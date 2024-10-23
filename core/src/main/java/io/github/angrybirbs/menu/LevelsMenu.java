@@ -57,7 +57,7 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".json"));
 
         if (levelFiles != null) {
