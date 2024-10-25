@@ -70,7 +70,11 @@ public class LevelsMenu extends Menu {
 
         levels = new ArrayList<ImageTextButton>();
 
-        File levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
+        if (!(levelDataDir.exists())) {
+            levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        }
+
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".tmx"));
 
         if (levelFiles != null) {
@@ -131,12 +135,21 @@ public class LevelsMenu extends Menu {
         }
     }
 
-    private Level loadLevelFromFile(String fileName) {
+    public static Level loadLevelFromFile(String fileName) {
         World world = new World(new Vector2(0, -9.8f), true);
-        fileName = "Levels/" + fileName;
+
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
+
+        if (!levelDataDir.exists()) {
+            levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        }
+        
+        fileName = levelDataDir.getAbsolutePath() + "/" + fileName;
+
         SpriteBatch batch = new SpriteBatch();
         ;
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
+        
         OrthogonalTiledMapRenderer tiledMapRenderer;
         OrthographicCamera camera = new OrthographicCamera();
         ;
@@ -192,30 +205,8 @@ public class LevelsMenu extends Menu {
         sortBirds(birds);
         return new Level(game, world, birds, pigs, materials, 1);
 
-        /*JsonValue pigsData = jsonData.get("pig");
-        for (JsonValue pigEntry : pigsData) {
-            String type = pigEntry.name();
-            for (JsonValue position : pigEntry) {
-                float x = position.get(0).asFloat();
-                float y = position.get(1).asFloat();
-                switch (type) {
-                    case "king":
-                        pigs.add(new King(world,(int) x, (int) y));
-                        break;
-                    case "normal":
-                        pigs.add(new Normal(world,(int) x, (int) y));
-                        break;
-                    case "general":
-                        pigs.add(new General(world,(int) x, (int) y));
-                        break;
-                }
-            }
-        }
-        sortBirds(birds);
-        return new Level(game, world, birds, pigs, levelNum);
-    }*/
     }
-    public void sortBirds(ArrayList<Bird> birds) {
+    public static void sortBirds(ArrayList<Bird> birds) {
         Collections.sort(birds, new Comparator<Bird>() {
             @Override
             public int compare(Bird b1, Bird b2) {
@@ -227,18 +218,4 @@ public class LevelsMenu extends Menu {
             }
         });
     }
-    /*public static void sortBirds(ArrayList<Bird> birds) {
-        Collections.sort(birds, new Comparator<Bird>() {
-            @Override
-            public int compare(Bird b1, Bird b2) {
-                // First compare by x position (max x first)
-                int xComparison = Float.compare(b2.getPosition().x, b1.getPosition().x);
-                if (xComparison != 0) {
-                    return xComparison; // If x positions are different, sort by x
-                }
-                // If x positions are the same, compare by y position (min y first)
-                return 0;
-            }
-        });
-    }*/
 }

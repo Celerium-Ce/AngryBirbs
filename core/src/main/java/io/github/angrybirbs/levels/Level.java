@@ -180,16 +180,16 @@ public class Level implements Screen {
                 hidePauseMenuButtons();
             }
         });
-//        nextButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                loadNextLevel();
-//            }
-//        });
+       nextButton.addListener(new ChangeListener() {
+           @Override
+           public void changed(ChangeEvent event, Actor actor) {
+               loadNextLevel();
+           }
+       });
         restartButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                isPaused = false;
+//                isPaused = false;
                 hidePauseMenuButtons();
                 restartLevel();
             }
@@ -222,18 +222,22 @@ public class Level implements Screen {
         stage.addActor(looseImage);
     }
 
-//    private void loadNextLevel() {
-//        int nextLevelNum = this.levelNum + 1;
-//
-//        File nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".json").file().getAbsolutePath());
-//
-//        if (nextLevelFile.exists()) {
-//            Level nextLevel = LevelsMenu.createLevelFromJson(nextLevelFile, nextLevelNum);
-//            game.setScreen(nextLevel);
-//        } else {
-//            game.setScreen(new LevelsMenu(game));
-//        }
-//    }
+   private void loadNextLevel() {
+       int nextLevelNum = this.levelNum + 1;
+
+       File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
+       if (!(nextLevelFile.exists())) {
+           nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
+       }
+       String nextLevelName = nextLevelNum + ".tmx";
+
+       if (nextLevelFile.exists()) {
+           Level nextLevel = LevelsMenu.loadLevelFromFile(nextLevelName);
+           game.setScreen(nextLevel);
+       } else {
+           game.setScreen(new LevelsMenu(game));
+       }
+   }
 
     private void showGameEndMenuButtons() {
         float centerX = Gdx.graphics.getWidth() / 2f;
@@ -242,14 +246,14 @@ public class Level implements Screen {
         menuButton.setPosition(centerX - menuButton.getWidth()/2f - 50, centerY);
         stage.addActor(menuButton);
 
-        //nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
-        //stage.addActor(nextButton);
+        nextButton.setPosition(centerX - nextButton.getWidth()/2f, centerY);
+        stage.addActor(nextButton);
 
         restartButton.setPosition(centerX - restartButton.getWidth()/2f + 50, centerY);
         stage.addActor(restartButton);
 
-        //saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
-        //stage.addActor(saveButton);
+        saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
+        stage.addActor(saveButton);
     }
 
     private void restartLevel() {
@@ -365,14 +369,14 @@ public class Level implements Screen {
 
 
 
-        drawGrid();
+//        drawGrid();
 
         if (slingshotinputprocessor.activebird == null && !birds.isEmpty()) {
             slingshotinputprocessor.setActiveBird(birds.iterator().next());
             slingshotinputprocessor.setbirdposition(slingshot.getOrigin());
         }
 
-        slingshot.renderDraggableArea();
+//        slingshot.renderDraggableArea();
         slingshot.render(delta);
         slingshot.renderTrajectory();
         world.step(1/60f, 6, 2);
@@ -381,7 +385,7 @@ public class Level implements Screen {
 
 
         camera.update();
-        debugRenderer.render(world, camera.combined);
+//        debugRenderer.render(world, camera.combined);
 
         if (isPaused) {
             showPauseMenuButtons();
