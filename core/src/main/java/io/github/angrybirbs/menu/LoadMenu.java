@@ -158,12 +158,10 @@ public class LoadMenu extends Menu{
 
         MapLayer objectLayer = tiledMap.getLayers().get("Ground");
         MapObject groundObject = objectLayer.getObjects().get("Ground");
-
+        float groundY = 0;
         if (groundObject != null) {
-            float groundY = (float) groundObject.getProperties().get("y", Float.class);
+            groundY = (float) groundObject.getProperties().get("y", Float.class);
             System.out.println("Ground Y coordinate: " + groundY);
-        } else {
-            System.out.println("Ground object not found!");
         }
         MapLayer layer = tiledMap.getLayers().get("Objects");
         for (MapObject obj : layer.getObjects()) {
@@ -181,13 +179,13 @@ public class LoadMenu extends Menu{
                     slingshot = new Slingshot(new Vector2(350, 300), tile, x, y);
                     System.out.println("Loaded Slingshot at: (" + x + ", " + y + ")");
                 } else if ("Red".equals(entityType)) {
-                    birds.add(new Red(world, tile, x, y));
+                    birds.add(new Red(world, tile, x, y+32));
                     System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
                 } else if ("Blue".equals(entityType)) {
-                    birds.add(new Blue(world, tile, x, y));
+                    birds.add(new Blue(world, tile, x, y+32));
                     System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
                 } else if ("Yellow".equals(entityType)) {
-                    birds.add(new Yellow(world, tile, x, y));
+                    birds.add(new Yellow(world, tile, x, y+32));
                     System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
                 } else if ("Normal".equals(entityType)) {
                     pigs.add(new Normal(world, tile, x, y));
@@ -211,9 +209,8 @@ public class LoadMenu extends Menu{
             }
         }
         sortBirds(birds);
+        return new Level(game, world, slingshot, birds, pigs, materials, 1, groundY);
 
-
-        return new Level(game, world, slingshot, birds, pigs, materials, 1);
     }
     public void sortBirds(ArrayList<Bird> birds) {
         Collections.sort(birds, new Comparator<Bird>() {

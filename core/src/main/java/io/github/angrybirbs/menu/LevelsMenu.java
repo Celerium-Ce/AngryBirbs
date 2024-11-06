@@ -84,12 +84,13 @@ public class LevelsMenu extends Menu {
             table.setFillParent(true);
             stage.addActor(table);
 
-            for (File file : levelFiles) {
+            for (int i = 0; i < levelFiles.length; i++) {
+                File file = levelFiles[i];
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
                 style.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/empty.png")));
 
-                ImageTextButton saveButton = new ImageTextButton(file.getName().substring(0, file.getName().indexOf(".")), style);
+                ImageTextButton saveButton = new ImageTextButton("Level " + (i + 1), style);
 
                 Table buttonTable = new Table();
                 buttonTable.add(saveButton.getImage()).expand().bottom().row();
@@ -98,20 +99,17 @@ public class LevelsMenu extends Menu {
                 saveButton.clearChildren();
                 saveButton.add(buttonTable).expand().fill();
 
-                // Listener for loading save
+                int finalI = i;
                 saveButton.addListener(new ChangeListener() {
                     @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        String levelNum = saveButton.getText().toString();
-
-                        Level level = loadLevelFromFile(file.getName());
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        Level level = loadLevelFromFile(finalI + 1);
                         if (level != null) {
                             game.setScreen(level);
                         }
                         dispose();
                     }
                 });
-
 
                 levels.add(saveButton);
                 table.add(saveButton).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
@@ -136,7 +134,7 @@ public class LevelsMenu extends Menu {
         }
     }
 
-    public static Level loadLevelFromFile(String fileName) {
+    public static Level loadLevelFromFile(int levelNum) {
         World world = new World(new Vector2(0, -9.8f), true);
         Slingshot slingshot = null;
         File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
@@ -145,15 +143,20 @@ public class LevelsMenu extends Menu {
             levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
         }
 
-        fileName = levelDataDir.getAbsolutePath() + "/" + fileName;
+        String fileName = levelDataDir.getAbsolutePath() + "/" + levelNum + ".tmx";
+        File levelFile = new File(fileName);
 
+        if (!levelFile.exists()) {
+            System.out.println("Level file not found: " + fileName);
+            return null;
+        }
         SpriteBatch batch = new SpriteBatch();
-        ;
+
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
 
         OrthogonalTiledMapRenderer tiledMapRenderer;
         OrthographicCamera camera = new OrthographicCamera();
-        ;
+
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
         ArrayList<Material> materials = new ArrayList<>();
@@ -212,7 +215,7 @@ public class LevelsMenu extends Menu {
                     }
                 }
                 sortBirds(birds);
-        return new Level(game, world, slingshot, birds, pigs, materials, 1, groundY);
+        return new Level(game, world, slingshot, birds, pigs, materials, levelNum, groundY);
 
     }
     public static void sortBirds(ArrayList<Bird> birds) {

@@ -54,6 +54,8 @@ public class Level implements Screen {
 
     protected List<Bird> initialBirds;
     protected List<Pig> initialPigs;
+    protected List<Material> initialMaterials;
+
 
     protected boolean isPaused;
 
@@ -113,9 +115,9 @@ public class Level implements Screen {
         this.pigs = pigs;
         this.materials = materials;
         slingshotinputprocessor = new Slingshotinputprocessor(slingshot,birds.getFirst(),this);
-        this.initialBirds = cloneBirds(birds);
-        this.initialPigs = new ArrayList<>(pigs);
-        this.initialPigs=pigs;
+
+
+
         isPaused = false;
 
         stage = new Stage();
@@ -126,22 +128,6 @@ public class Level implements Screen {
 
     }
 
-
-    private List<Bird> cloneBirds(List<Bird> birds) {
-        List<Bird> clonedBirds = new ArrayList<>();
-        for (Bird bird : birds) {
-            clonedBirds.add(new Bird(world ,bird.tile, bird.getPosition().x, bird.getPosition().y));
-        }
-        return clonedBirds;
-    }
-
-    private List<Pig> clonePigs(List<Pig> pigs) {
-        List<Pig> clonedPigs = new ArrayList<>();
-        for (Pig pig : pigs) {
-            clonedPigs.add(new Pig(world,pig.tile, pig.getPosition().x, pig.getPosition().y));
-        }
-        return clonedPigs;
-    }
 
     private void setupButtons() {
         pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/pause.png")))));
@@ -187,7 +173,13 @@ public class Level implements Screen {
     nextButton.addListener(new ChangeListener() {
         @Override
         public void changed(ChangeEvent event, Actor actor) {
-            loadNextLevel();
+            Level nextLevel = LevelsMenu.loadLevelFromFile(levelNum+1);
+            if (nextLevel != null){
+                game.setScreen(nextLevel);
+            } else {
+                    game.setScreen(new LevelsMenu(game));
+                    dispose();
+            }
         }
     });
         restartButton.addListener(new ChangeListener() {
@@ -195,7 +187,8 @@ public class Level implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
 //                isPaused = false;
                 hidePauseMenuButtons();
-                restartLevel();
+                Level nextLevel = LevelsMenu.loadLevelFromFile(levelNum);
+                game.setScreen(nextLevel);
             }
         });
 
@@ -226,23 +219,6 @@ public class Level implements Screen {
         stage.addActor(looseImage);
     }
 
-    private void loadNextLevel() {
-        int nextLevelNum = this.levelNum + 1;
-
-        File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
-        if (!(nextLevelFile.exists())) {
-            nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
-        }
-        String nextLevelName = nextLevelNum + ".tmx";
-
-        if (nextLevelFile.exists()) {
-            Level nextLevel = LevelsMenu.loadLevelFromFile(nextLevelName);
-            game.setScreen(nextLevel);
-        } else {
-            game.setScreen(new LevelsMenu(game));
-        }
-    }
-
     private void showGameEndMenuButtons() {
         float centerX = Gdx.graphics.getWidth() / 2f;
         float centerY = Gdx.graphics.getHeight() / 2f;
@@ -258,11 +234,6 @@ public class Level implements Screen {
 
         saveButton.setPosition(centerX - saveButton.getWidth()/2f, centerY -  saveButton.getWidth()/2f - 10);
         stage.addActor(saveButton);
-    }
-
-    private void restartLevel() {
-        Level level = new Level(game,world, slingshot, initialBirds, initialPigs, materials, levelNum, groundY);
-        game.setScreen(level);
     }
 
     private boolean checkWinCondition() {
