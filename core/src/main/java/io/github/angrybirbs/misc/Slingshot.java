@@ -4,22 +4,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 
 public class Slingshot {
     private final Vector2 origin;
-    private Texture texture;
+    private final TiledMapTile tile;
     private Vector2 dragPosition;
     private boolean isDragging;
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private SpriteBatch batch = new SpriteBatch();
+    protected Vector2 position;
 
-    public Slingshot(Vector2 origin) {
+    public Slingshot(Vector2 origin, TiledMapTile tile, float x, float y) {
         this.origin = origin;
+        this.tile = tile;
+        this.position = new Vector2(x, y);
+
         this.dragPosition = new Vector2(origin); // Default to the origin
         this.isDragging = false;
-        texture = new Texture(Gdx.files.internal("entities/slingshot.png"));
     }
 
     public void startDragging(Vector2 initialPosition) {
@@ -48,7 +53,9 @@ public class Slingshot {
 
     public void render(float delta) {
         batch.begin();
-        batch.draw(texture, origin.x-texture.getWidth()/4f, origin.y-texture.getHeight()/2f, texture.getWidth()/2f, texture.getHeight()/2f);
+        TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
+
+        batch.draw(region, position.x-region.getRegionWidth()/2f, position.y); // Draw using TextureRegion
         batch.end();
         if (isDragging) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -91,7 +98,6 @@ public class Slingshot {
 
 
     public void dispose() {
-        texture.dispose();
         shapeRenderer.dispose();
         batch.dispose();
     }

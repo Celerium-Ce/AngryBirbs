@@ -2,12 +2,14 @@ package io.github.angrybirbs.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -70,14 +72,15 @@ public class Level implements Screen {
     private BitmapFont font;
 
     private boolean gameEnded;
+    private float groundY;
 
-    public Level(Main game,World world, List<Bird> birds, List<Pig> pigs, List<Material> materials, int levelNum) {
+    public Level(Main game,World world, Slingshot slingshot, List<Bird> birds, List<Pig> pigs, List<Material> materials, int levelNum, float groundY) {
         this.game = game;
         gameEnded = false;
         this.levelNum = levelNum;
         this.world = world;
         world.setContactListener(new GameContactListener());
-
+        this.groundY = groundY;
         debugRenderer = new Box2DDebugRenderer();
         camera = new OrthographicCamera(2*Gdx.graphics.getWidth()/PPM, 2*Gdx.graphics.getHeight()/PPM);
 
@@ -86,11 +89,11 @@ public class Level implements Screen {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
-        slingshot= new Slingshot(new Vector2(350,300));
+        this.slingshot= slingshot;
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0/PPM, (150-50)/PPM); //50 offset to allign correctly lets see how to fix later
+        bodyDef.position.set(0/PPM, (groundY-32)/PPM); //32 offset to allign correctly lets see how to fix later
 
         ground = world.createBody(bodyDef);
 
@@ -120,6 +123,7 @@ public class Level implements Screen {
         Gdx.input.setInputProcessor(slingshotinputprocessor);
         setupButtons();
         setupGameEnd();
+
     }
 
 
@@ -180,12 +184,12 @@ public class Level implements Screen {
                 hidePauseMenuButtons();
             }
         });
-       nextButton.addListener(new ChangeListener() {
-           @Override
-           public void changed(ChangeEvent event, Actor actor) {
-               loadNextLevel();
-           }
-       });
+    nextButton.addListener(new ChangeListener() {
+        @Override
+        public void changed(ChangeEvent event, Actor actor) {
+            loadNextLevel();
+        }
+    });
         restartButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -222,22 +226,22 @@ public class Level implements Screen {
         stage.addActor(looseImage);
     }
 
-   private void loadNextLevel() {
-       int nextLevelNum = this.levelNum + 1;
+    private void loadNextLevel() {
+        int nextLevelNum = this.levelNum + 1;
 
-       File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
-       if (!(nextLevelFile.exists())) {
-           nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
-       }
-       String nextLevelName = nextLevelNum + ".tmx";
+        File nextLevelFile = new File(Gdx.files.local("../Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
+        if (!(nextLevelFile.exists())) {
+            nextLevelFile = new File(Gdx.files.local("Levels/" + nextLevelNum + ".tmx").file().getAbsolutePath());
+        }
+        String nextLevelName = nextLevelNum + ".tmx";
 
-       if (nextLevelFile.exists()) {
-           Level nextLevel = LevelsMenu.loadLevelFromFile(nextLevelName);
-           game.setScreen(nextLevel);
-       } else {
-           game.setScreen(new LevelsMenu(game));
-       }
-   }
+        if (nextLevelFile.exists()) {
+            Level nextLevel = LevelsMenu.loadLevelFromFile(nextLevelName);
+            game.setScreen(nextLevel);
+        } else {
+            game.setScreen(new LevelsMenu(game));
+        }
+    }
 
     private void showGameEndMenuButtons() {
         float centerX = Gdx.graphics.getWidth() / 2f;
@@ -257,7 +261,7 @@ public class Level implements Screen {
     }
 
     private void restartLevel() {
-        Level level = new Level(game,world, initialBirds, initialPigs, materials, levelNum);
+        Level level = new Level(game,world, slingshot, initialBirds, initialPigs, materials, levelNum, groundY);
         game.setScreen(level);
     }
 
@@ -369,7 +373,7 @@ public class Level implements Screen {
 
 
 
-//        drawGrid();
+        drawGrid();
 
         if (slingshotinputprocessor.activebird == null && !birds.isEmpty()) {
             slingshotinputprocessor.setActiveBird(birds.iterator().next());

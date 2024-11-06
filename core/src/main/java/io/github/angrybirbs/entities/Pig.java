@@ -17,7 +17,6 @@ public class Pig {
     private Fixture fixture;
 
     protected Vector2 position;
-    protected Vector2 position2;
     protected float width, height;
 
     private boolean isDead;
@@ -27,7 +26,6 @@ public class Pig {
 
 
         this.position = new Vector2(x, y);
-        this.position2 = new Vector2(x, y);
         this.width = tile.getTextureRegion().getRegionWidth();
         this.height = tile.getTextureRegion().getRegionHeight();
 
@@ -59,7 +57,6 @@ public class Pig {
         position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
 
         if (!isDead) {
-
             TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
             if (region != null) {
                 batch.draw(region, position.x-region.getRegionWidth()/2f, position.y-region.getRegionHeight()/2f); // Draw using TextureRegion

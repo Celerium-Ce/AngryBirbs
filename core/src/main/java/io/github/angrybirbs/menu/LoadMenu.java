@@ -25,6 +25,7 @@ import io.github.angrybirbs.Main;
 import com.badlogic.gdx.Gdx;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.levels.Level;
+import io.github.angrybirbs.misc.Slingshot;
 
 
 import java.io.File;
@@ -134,17 +135,36 @@ public class LoadMenu extends Menu{
 
     private Level loadLevelFromFile(String fileName) {
         World world = new World(new Vector2(0, -9.8f), true);
-        fileName = "../Levels/" + fileName;
-        SpriteBatch batch = new SpriteBatch();;
+        Slingshot slingshot = null;
+        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
+
+        if (!levelDataDir.exists()) {
+            levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
+        }
+
+        fileName = levelDataDir.getAbsolutePath() + "/" + fileName;
+
+        SpriteBatch batch = new SpriteBatch();
+        ;
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
+
         OrthogonalTiledMapRenderer tiledMapRenderer;
-        OrthographicCamera camera = new OrthographicCamera();;
+        OrthographicCamera camera = new OrthographicCamera();
+        ;
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
         ArrayList<Material> materials = new ArrayList<>();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
+        MapLayer objectLayer = tiledMap.getLayers().get("Ground");
+        MapObject groundObject = objectLayer.getObjects().get("Ground");
+
+        if (groundObject != null) {
+            float groundY = (float) groundObject.getProperties().get("y", Float.class);
+            System.out.println("Ground Y coordinate: " + groundY);
+        } else {
+            System.out.println("Ground object not found!");
+        }
         MapLayer layer = tiledMap.getLayers().get("Objects");
         for (MapObject obj : layer.getObjects()) {
             if (obj instanceof TiledMapTileMapObject) {
@@ -157,40 +177,43 @@ public class LoadMenu extends Menu{
 
                 // Check the properties to determine the type of object
                 String entityType = (String) tileObject.getProperties().get("type");
-
-                if ("Red".equals(entityType)) {
-                    birds.add(new Red(world, tile, (int)x, (int)y));
+                if ("Slingshot".equals(entityType)) {
+                    slingshot = new Slingshot(new Vector2(350, 300), tile, x, y);
+                    System.out.println("Loaded Slingshot at: (" + x + ", " + y + ")");
+                } else if ("Red".equals(entityType)) {
+                    birds.add(new Red(world, tile, x, y));
                     System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
                 } else if ("Blue".equals(entityType)) {
-                    birds.add(new Blue(world, tile, (int)x, (int)y));
+                    birds.add(new Blue(world, tile, x, y));
                     System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
                 } else if ("Yellow".equals(entityType)) {
-                    birds.add(new Yellow(world, tile, (int)x, (int)y));
+                    birds.add(new Yellow(world, tile, x, y));
                     System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
                 } else if ("Normal".equals(entityType)) {
-                    pigs.add(new Normal(world, tile, (int)x, (int)y));
+                    pigs.add(new Normal(world, tile, x, y));
                     System.out.println("Loaded Normal Pig at: (" + x + ", " + y + ")");
                 } else if ("General".equals(entityType)) {
-                    pigs.add(new General(world, tile, (int)x, (int)y));
+                    pigs.add(new General(world, tile, x, y));
                     System.out.println("Loaded General Pig at: (" + x + ", " + y + ")");
                 } else if ("King".equals(entityType)) {
-                    pigs.add(new King(world, tile, (int)x, (int)y));
+                    pigs.add(new King(world, tile, x, y));
                     System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
                 } else if ("Wood".equals(entityType)) {
-                    materials.add(new Wood(tile, (int)x, (int)y,world));
+                    materials.add(new Wood(tile, x, y, world));
                     System.out.println("Loaded wood at: (" + x + ", " + y + ")");
-                }  else if ("Ice".equals(entityType)) {
-                    materials.add(new Ice(tile, (int)x, (int)y,world));
+                } else if ("Ice".equals(entityType)) {
+                    materials.add(new Ice(tile, x, y, world));
                     System.out.println("Loaded ice at: (" + x + ", " + y + ")");
-                }  else if ("Steel".equals(entityType)) {
-                    materials.add(new Steel(tile, (int)x, (int)y,world));
+                } else if ("Steel".equals(entityType)) {
+                    materials.add(new Steel(tile, x, y, world));
                     System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                 }
             }
         }
         sortBirds(birds);
-        return new Level(game, world, birds, pigs, materials, 1);
 
+
+        return new Level(game, world, slingshot, birds, pigs, materials, 1);
     }
     public void sortBirds(ArrayList<Bird> birds) {
         Collections.sort(birds, new Comparator<Bird>() {
