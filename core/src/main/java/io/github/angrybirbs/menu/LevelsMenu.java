@@ -185,13 +185,13 @@ public class LevelsMenu extends Menu {
                             slingshot = new Slingshot(new Vector2(350, 300), tile, x, y);
                             System.out.println("Loaded Slingshot at: (" + x + ", " + y + ")");
                         } else if ("Red".equals(entityType)) {
-                            birds.add(new Red(world, tile, x, y+32));
+                            birds.add(new Red(world, tile, x, y));
                             System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
                         } else if ("Blue".equals(entityType)) {
-                            birds.add(new Blue(world, tile, x, y+32));
+                            birds.add(new Blue(world, tile, x, y));
                             System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
                         } else if ("Yellow".equals(entityType)) {
-                            birds.add(new Yellow(world, tile, x, y+32));
+                            birds.add(new Yellow(world, tile, x, y));
                             System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
                         } else if ("Normal".equals(entityType)) {
                             pigs.add(new Normal(world, tile, x, y));

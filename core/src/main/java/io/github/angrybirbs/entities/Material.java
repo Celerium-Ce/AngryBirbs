@@ -30,12 +30,12 @@ public class Material {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(position.x / PPM + width/(2*PPM), position.y / PPM );
+        bodyDef.position.set(position.x / PPM + width / (2 * PPM), position.y / PPM + height / (2 * PPM));
 
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width/70, height/70); //70
+        shape.setAsBox(width / (2 * PPM), height / (2 * PPM));
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;

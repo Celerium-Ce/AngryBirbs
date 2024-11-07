@@ -34,7 +34,7 @@ public class Bird {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(position.x / PPM, position.y / PPM);
+        bodyDef.position.set(position.x / PPM, position.y / PPM + height/(2*PPM));
 
         body = world.createBody(bodyDef);
 

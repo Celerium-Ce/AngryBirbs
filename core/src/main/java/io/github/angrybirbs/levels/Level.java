@@ -95,7 +95,7 @@ public class Level implements Screen {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(0/PPM, (groundY-32)/PPM); //32 offset to allign correctly lets see how to fix later
+        bodyDef.position.set(0/PPM, (groundY-PPM)/PPM); //PPM offset to allign correctly lets see how to fix later
 
         ground = world.createBody(bodyDef);
 
