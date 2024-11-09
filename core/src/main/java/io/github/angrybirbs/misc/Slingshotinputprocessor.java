@@ -12,7 +12,7 @@ import static io.github.angrybirbs.levels.Level.PPM;
 
 public class Slingshotinputprocessor implements InputProcessor {
     private Slingshot slingshot;
-    public Bird activebird;
+    public static Bird activebird;
     private Level level;
 
     public Slingshotinputprocessor(Slingshot slingshot, Bird activebird,Level level) {
@@ -20,6 +20,10 @@ public class Slingshotinputprocessor implements InputProcessor {
         this.slingshot = slingshot;
         this.activebird = activebird;
         activebird.setPosition(slingshot.getOrigin().x, slingshot.getOrigin().y);
+    }
+
+    public static Bird getActiveBird() {
+        return activebird;
     }
 
     public void setbirdposition(Vector2 position) {
@@ -55,7 +59,7 @@ public class Slingshotinputprocessor implements InputProcessor {
             if (activebird != null) {
                 activebird.togglephysics();
                 Vector2 launchVector = slingshot.getLaunchVector();
-                launchVector.scl(0.3f);
+                launchVector.scl(0.355f);
                 activebird.getBody().applyLinearImpulse(launchVector, activebird.getBody().getWorldCenter(), true);
 
             }

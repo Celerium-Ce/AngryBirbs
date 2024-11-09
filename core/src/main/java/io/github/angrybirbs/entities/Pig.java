@@ -124,4 +124,22 @@ public class Pig {
         }
     }
 
+
+    public Body getBody() {
+        return body;
+    }
+    public void setVelocity(Vector2 velocity) {
+        body.setLinearVelocity(velocity);
+    }
+    public Vector2 getVelocity() {
+        return body.getLinearVelocity();
+    }
+
+    public void reduceSpeed(float factor) {
+        Vector2 velocity = getVelocity();
+        body.setLinearVelocity(velocity.scl(factor));
+    }
+    public void takeDamage(float by){
+
+    }
 }

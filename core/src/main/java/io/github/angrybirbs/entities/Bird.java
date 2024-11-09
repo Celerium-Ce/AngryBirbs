@@ -34,7 +34,7 @@ public class Bird {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(position.x / PPM, position.y / PPM + height/(2*PPM));
+        bodyDef.position.set(position.x / PPM + width/(2*PPM), position.y / PPM + height/(2*PPM));
 
         body = world.createBody(bodyDef);
 
@@ -121,4 +121,24 @@ public class Bird {
     public String getTexturePath() {
         return this.texturePath;
     }
+
+    public int getPower() {
+        return 1;
+    }
+
+    public Vector2 getVelocity() {
+        return body.getLinearVelocity();
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        body.setLinearVelocity(velocity);
+    }
+
+    public void reduceSpeed(float factor) {
+        Vector2 velocity = getVelocity();
+        body.setLinearVelocity(velocity.scl(factor));
+    }
+
+    public void takeDamage(float damage) {  }
+
 }

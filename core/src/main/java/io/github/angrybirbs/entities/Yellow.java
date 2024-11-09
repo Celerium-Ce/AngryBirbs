@@ -5,13 +5,26 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Yellow extends Bird {
     private int power;
+    private float health;
 
     public Yellow(World world, TiledMapTile tile, float x, float y) {
         super(world,tile,x,y);
         this.power = 10;
+        this.health = 1000;
     }
 
+    @Override
     public int getPower() {
         return power;
+    }
+
+    @Override
+    public void takeDamage(float damage) {
+        health -= damage;
+        if (health <= 0) {
+            setDead();
+        }
+        System.out.println("Yellow took " + damage + " damage and has " + health + " health left");
+
     }
 }

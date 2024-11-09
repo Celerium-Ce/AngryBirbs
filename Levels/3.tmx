@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="58" height="33" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="121">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="58" height="33" tilewidth="32" tileheight="32" infinite="0" nextlayerid="16" nextobjectid="135">
  <tileset firstgid="1" name="BlueBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="../assets/entities/BlueBird.png" width="64" height="64"/>
  </tileset>
@@ -9,70 +9,79 @@
  <tileset firstgid="3" name="iceH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
   <image source="../assets/entities/iceH.png" width="128" height="16"/>
  </tileset>
- <tileset firstgid="4" name="iceV" tilewidth="16" tileheight="128" tilecount="2" columns="1">
+ <tileset firstgid="4" name="iceV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
   <image source="../assets/entities/iceV.png" width="16" height="128"/>
  </tileset>
- <tileset firstgid="6" name="KingPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+ <tileset firstgid="5" name="KingPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="../assets/entities/KingPig.png" width="64" height="64"/>
  </tileset>
- <tileset firstgid="7" name="NormalPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+ <tileset firstgid="6" name="NormalPig" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="../assets/entities/NormalPig.png" width="64" height="64"/>
  </tileset>
- <tileset firstgid="8" name="RedBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+ <tileset firstgid="7" name="RedBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="../assets/entities/RedBird.png" width="64" height="64"/>
  </tileset>
- <tileset firstgid="9" name="slingshot" tilewidth="64" tileheight="155" tilecount="1" columns="1">
+ <tileset firstgid="8" name="slingshot" tilewidth="64" tileheight="155" tilecount="1" columns="1">
   <grid orientation="orthogonal" width="128" height="311"/>
   <image source="../assets/entities/slingshot.png" width="64" height="155"/>
  </tileset>
- <tileset firstgid="10" name="steelH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
+ <tileset firstgid="9" name="steelH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
   <image source="../assets/entities/steelH.png" width="128" height="16"/>
  </tileset>
- <tileset firstgid="11" name="steelV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
+ <tileset firstgid="10" name="steelV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
   <image source="../assets/entities/steelV.png" width="16" height="128"/>
  </tileset>
- <tileset firstgid="12" name="woodH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
+ <tileset firstgid="11" name="woodH" tilewidth="128" tileheight="16" tilecount="1" columns="1">
   <image source="../assets/entities/woodH.png" width="128" height="16"/>
  </tileset>
- <tileset firstgid="13" name="YellowBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
+ <tileset firstgid="12" name="YellowBird" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="../assets/entities/YellowBird.png" width="64" height="64"/>
  </tileset>
- <tileset firstgid="14" name="woodV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
+ <tileset firstgid="13" name="woodV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
   <image source="../assets/entities/woodV.png" width="16" height="128"/>
  </tileset>
- <tileset firstgid="15" name="background" tilewidth="1856" tileheight="1056" tilecount="1" columns="1">
+ <tileset firstgid="14" name="background" tilewidth="1856" tileheight="1056" tilecount="1" columns="1">
   <image source="../assets/level.png" width="1856" height="1056"/>
  </tileset>
- <tileset firstgid="16" name="Background" tilewidth="1856" tileheight="1056" tilecount="1" columns="0">
+ <tileset firstgid="15" name="Background" tilewidth="1856" tileheight="1056" tilecount="1" columns="0">
   <grid orientation="orthogonal" width="32" height="32"/>
   <tile id="0">
    <image source="../assets/level.png" width="1856" height="1056"/>
   </tile>
  </tileset>
- <tileset firstgid="17" name="iceV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
+ <tileset firstgid="16" name="iceV" tilewidth="16" tileheight="128" tilecount="1" columns="1">
   <image source="../assets/entities/iceV.png" width="16" height="128"/>
  </tileset>
  <objectgroup id="16" name="Background" locked="1">
-  <object id="106" gid="16" x="0" y="1056" width="1856" height="1056"/>
+  <object id="106" gid="15" x="0" y="1056" width="1856" height="1056"/>
  </objectgroup>
  <objectgroup id="13" name="Ground" locked="1">
   <object id="103" name="Ground" type="Ground" x="0" y="908" width="1856"/>
  </objectgroup>
  <objectgroup id="5" name="Objects">
-  <object id="37" type="Normal" gid="7" x="1341.29" y="908" width="64" height="64"/>
-  <object id="60" type="Normal" gid="7" x="1251.98" y="908" width="64" height="64"/>
-  <object id="61" type="Normal" gid="7" x="1430.4" y="908" width="64" height="64"/>
+  <object id="37" type="Normal" gid="6" x="1341.29" y="908" width="64" height="64"/>
+  <object id="60" type="Normal" gid="6" x="1251.98" y="908" width="64" height="64"/>
+  <object id="61" type="Normal" gid="6" x="1430.4" y="908" width="64" height="64"/>
   <object id="63" type="Ice" gid="4" x="1324.23" y="908" width="16" height="128"/>
   <object id="64" type="Ice" gid="4" x="1411.09" y="908" width="16" height="128"/>
   <object id="65" type="Ice" gid="4" x="1497.04" y="908" width="16" height="128"/>
-  <object id="102" type="Red" gid="8" x="350" y="795" width="64" height="64"/>
-  <object id="99" type="Slingshot" gid="9" x="353.19" y="908" width="64" height="155"/>
-  <object id="109" type="Yellow" gid="13" x="190" y="908" width="64" height="64"/>
-  <object id="110" type="Blue" gid="1" x="110" y="908" width="64" height="64"/>
-  <object id="111" type="Blue" gid="1" x="270" y="908" width="64" height="64"/>
-  <object id="113" type="Ice" gid="17" x="1225.25" y="908" width="16" height="128"/>
+  <object id="113" type="Ice" gid="16" x="1225.25" y="908" width="16" height="128"/>
   <object id="114" type="Ice" gid="3" x="1217.17" y="780" width="128" height="16"/>
   <object id="115" type="Ice" gid="3" x="1395.05" y="780" width="128" height="16"/>
-  <object id="116" type="Steel" gid="10" x="1309.4" y="764" width="128" height="16"/>
+  <object id="116" type="Steel" gid="9" x="1309.4" y="764" width="128" height="16"/>
+  <object id="121" type="Red" gid="7" x="360.509" y="506.995" width="64" height="64"/>
+  <object id="122" type="Slingshot" gid="8" x="363.509" y="619.995" width="64" height="155"/>
+  <object id="123" type="Yellow" gid="12" x="171.509" y="763.995" width="64" height="64"/>
+  <object id="124" type="Blue" gid="1" x="61.448" y="907.635" width="64" height="64"/>
+  <object id="125" type="Blue" gid="1" x="235.509" y="763.995" width="64" height="64"/>
+  <object id="126" type="Steel" gid="10" x="443.509" y="907.995" width="16" height="128"/>
+  <object id="127" type="Steel" gid="10" x="331.509" y="907.995" width="16" height="128"/>
+  <object id="128" type="Steel" gid="10" x="443.509" y="763.995" width="16" height="128"/>
+  <object id="129" type="Steel" gid="10" x="331.509" y="763.995" width="16" height="128"/>
+  <object id="130" type="Steel" gid="9" x="331.509" y="779.995" width="128" height="16"/>
+  <object id="131" type="Steel" gid="9" x="331.509" y="635.995" width="128" height="16"/>
+  <object id="132" type="Steel" gid="10" x="283.509" y="907.995" width="16" height="128"/>
+  <object id="133" type="Steel" gid="10" x="171.509" y="907.995" width="16" height="128"/>
+  <object id="134" type="Steel" gid="9" x="171.509" y="779.995" width="128" height="16"/>
  </objectgroup>
 </map>

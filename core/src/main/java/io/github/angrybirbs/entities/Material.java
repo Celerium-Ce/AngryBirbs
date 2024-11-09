@@ -20,7 +20,7 @@ public class Material {
     private boolean isDead;
 
 
-    public Material(TiledMapTile tile, float x, float y,World world) {
+    public Material(TiledMapTile tile, float x, float y,World world, float density, float friction, float restitution) {
         this.tile = tile;
         this.world=world;
 
@@ -39,11 +39,12 @@ public class Material {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.density = 100.0f;
-        fixtureDef.friction = 10f;
-        fixtureDef.restitution = 0.01f;
+        fixtureDef.density = density;
+        fixtureDef.friction = friction;
+        fixtureDef.restitution = restitution;
 
         Fixture fixture = body.createFixture(fixtureDef);
+        
         fixture.setUserData(this);
         body.setUserData(this);
 
@@ -113,5 +114,9 @@ public class Material {
     public void setDead() {
         isDead = true;
     }
+    public void takeDamage(float by){    }
 
+    public Body getBody() {
+        return body;
+    }
 }

@@ -182,7 +182,7 @@ public class LevelsMenu extends Menu {
                         // Check the properties to determine the type of object
                         String entityType = (String) tileObject.getProperties().get("type");
                         if ("Slingshot".equals(entityType)) {
-                            slingshot = new Slingshot(new Vector2(350, 300), tile, x, y);
+                            slingshot = new Slingshot(new Vector2(x+29f, y+152f), tile, x+32, y);
                             System.out.println("Loaded Slingshot at: (" + x + ", " + y + ")");
                         } else if ("Red".equals(entityType)) {
                             birds.add(new Red(world, tile, x, y));

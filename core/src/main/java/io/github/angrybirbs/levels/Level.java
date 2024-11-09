@@ -105,7 +105,7 @@ public class Level implements Screen {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1000.0f;
-        fixtureDef.friction=100f;
+        fixtureDef.friction= 100f;
         Fixture fixture = ground.createFixture(fixtureDef);
         ground.setUserData("ground");
         fixture.setUserData("ground");
@@ -250,8 +250,28 @@ public class Level implements Screen {
     }
 
     private boolean checkLooseCondition() {
+        return birds.isEmpty() && allObjectsStopped() && !gameEnded;
+    }
 
-        return birds.isEmpty() && !gameEnded;
+    private boolean allObjectsStopped() {
+        float speedThreshold = 0.5f;
+
+        for (Bird bird : birds) {
+            if (bird.getBody().getLinearVelocity().len() > speedThreshold) {
+                return false;
+            }
+        }
+        for (Pig pig : pigs) {
+            if (pig.getBody().getLinearVelocity().len() > speedThreshold) {
+                return false;
+            }
+        }
+        for (Material material : materials) {
+            if (material.getBody().getLinearVelocity().len() > speedThreshold) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void showLooseScreen() {
