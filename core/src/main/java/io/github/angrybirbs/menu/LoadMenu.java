@@ -93,6 +93,7 @@ public class LoadMenu extends Menu{
             stage.addActor(table);
             for (int i = 0; i < saveFiles.length; i++) {
                 File file = saveFiles[i];
+                
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
                 style.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/empty.png")));
@@ -119,8 +120,29 @@ public class LoadMenu extends Menu{
                     }
                 });
 
+                ImageButton.ImageButtonStyle deleteStyle = new ImageButton.ImageButtonStyle();
+                deleteStyle.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/del.png")));
+                ImageButton deleteButton = new ImageButton(deleteStyle);
+
+                deleteButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        if (file.delete()) {
+                            System.out.println("Save file " + (finalI + 1) + " deleted successfully.");
+                            game.setScreen(new LoadMenu(game));
+                            dispose();
+                        } else {
+                            System.out.println("Failed to delete save file " + (finalI + 1) + ".");
+                        }
+                    }
+                });
+
+                Table combinedTable = new Table();
+                combinedTable.add(saveButton).size(100, 100);
+                combinedTable.add(deleteButton).size(35, 35).top().left();
+
                 saves.add(saveButton);
-                table.add(saveButton).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
+                table.add(combinedTable).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
 
                 if (saves.size() % 5 == 0) {
                     table.row();
