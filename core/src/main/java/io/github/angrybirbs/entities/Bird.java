@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM;
 
-public class Bird {
+public abstract class Bird implements power{
     protected Texture texture;
     private String texturePath;
     private Body body;
@@ -58,6 +58,8 @@ public class Bird {
 
         this.isDead = false;
     }
+
+
 
     public void render(SpriteBatch batch) {
         position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);

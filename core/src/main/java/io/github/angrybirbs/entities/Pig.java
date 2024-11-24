@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM;
 
-public class Pig {
+public abstract class Pig {
     public TiledMapTile tile;
     private Body body;
     private World world;
@@ -103,6 +103,8 @@ public class Pig {
             body.setType(BodyDef.BodyType.StaticBody);
         }
     }
+
+    public abstract float getHealth();
 
     public void setPosition(float x, float y) {
         this.position.set(x, y);

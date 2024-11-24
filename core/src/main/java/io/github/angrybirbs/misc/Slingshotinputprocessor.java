@@ -75,6 +75,10 @@ public class Slingshotinputprocessor implements InputProcessor {
             level.togglePause();
             return true;
         }
+        if (keycode == Input.Keys.SPACE && activebird != null) {
+            activebird.usePower();
+            return true;
+        }
         return false;
     }
 

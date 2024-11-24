@@ -9,7 +9,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM;
 
-public class Material {
+public abstract class Material {
     protected final TiledMapTile tile;
     protected Vector2 position;
     protected float width, height;
@@ -44,7 +44,7 @@ public class Material {
         fixtureDef.restitution = restitution;
 
         Fixture fixture = body.createFixture(fixtureDef);
-        
+
         fixture.setUserData(this);
         body.setUserData(this);
 
@@ -110,11 +110,15 @@ public class Material {
             }
         }
     }*/
-
+    public Vector2 getVelocity() {
+        return body.getLinearVelocity();
+    }
     public void setDead() {
         isDead = true;
     }
     public void takeDamage(float by){    }
+
+    public abstract float getHealth();
 
     public Body getBody() {
         return body;

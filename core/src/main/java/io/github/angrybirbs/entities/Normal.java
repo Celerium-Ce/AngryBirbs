@@ -23,4 +23,9 @@ public class Normal extends Pig {
         }
         System.out.println("Normal took " + damage + " damage and has " + health + " health left");
     }
+
+    @Override
+    public float getHealth(){
+        return health;
+    }
 }

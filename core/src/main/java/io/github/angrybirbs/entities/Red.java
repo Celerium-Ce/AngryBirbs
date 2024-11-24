@@ -3,7 +3,7 @@ package io.github.angrybirbs.entities;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Red extends Bird {
+public class Red extends Bird implements power {
     private int power;
     private float health;
 
@@ -12,6 +12,7 @@ public class Red extends Bird {
         this.power = 10;
         this.health = 1000;
     }
+
 
     @Override
     public int getPower() {
@@ -24,5 +25,10 @@ public class Red extends Bird {
             setDead();
         }
         System.out.println("Red took " + damage + " damage and has " + health + " health left");
+    }
+
+    @Override
+    public void usePower() {
+        return;
     }
 }

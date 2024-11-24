@@ -8,7 +8,22 @@ dependencies {
   api "com.github.tommyettinger:libgdx-utils:$utilsVersion"
   api "com.kotcrab.vis:vis-ui:$visUiVersion"
 
+  testImplementation 'org.mockito:mockito-core:5.5.0' // For basic mocking
+  testImplementation 'org.mockito:mockito-inline:5.2.0' // For mocking final classes
+  testImplementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+  testImplementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  testImplementation "com.github.tommyettinger:libgdx-utils-box2d:$utilsBox2dVersion"
+  testImplementation "com.github.tommyettinger:libgdx-utils:$utilsVersion"
+  testRuntimeOnly "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+  testRuntimeOnly "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+  testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+  testImplementation "com.kotcrab.vis:vis-ui:$visUiVersion"
+
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
+
+  testImplementation 'junit:junit:4.13.2'
 }

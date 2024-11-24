@@ -3,7 +3,7 @@ package io.github.angrybirbs.entities;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Yellow extends Bird {
+public class Yellow extends Bird implements power {
     private int power;
     private float health;
 
@@ -26,5 +26,10 @@ public class Yellow extends Bird {
         }
         System.out.println("Yellow took " + damage + " damage and has " + health + " health left");
 
+    }
+
+    @Override
+    public void usePower() {
+        this.getBody().setLinearVelocity(this.getBody().getLinearVelocity().scl(2));
     }
 }
