@@ -364,7 +364,7 @@ public class Level implements Screen {
 
 
 
-        drawGrid();
+        //drawGrid(); no longer needed for debugging
 
         if (slingshotinputprocessor.activebird == null && !birds.isEmpty()) {
             slingshotinputprocessor.setActiveBird(birds.iterator().next());
@@ -380,7 +380,7 @@ public class Level implements Screen {
 
 
         camera.update();
-//        debugRenderer.render(world, camera.combined);
+//        debugRenderer.render(world, camera.combined); no longer needed for debugging
 
         if (isPaused) {
             showPauseMenuButtons();

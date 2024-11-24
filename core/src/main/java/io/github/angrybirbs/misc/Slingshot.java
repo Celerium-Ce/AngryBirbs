@@ -17,6 +17,7 @@ public class Slingshot {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private SpriteBatch batch = new SpriteBatch();
     protected Vector2 position;
+    private final float maxStretchDistance = 200f;
 
     public Slingshot(Vector2 origin, TiledMapTile tile, float x, float y) {
         this.origin = origin;
@@ -34,7 +35,11 @@ public class Slingshot {
 
     public void updateDragPosition(Vector2 newPosition) {
         if (isDragging) {
-            dragPosition.set(newPosition);
+            Vector2 stretchVector = new Vector2(newPosition).sub(origin);
+            if (stretchVector.len() > maxStretchDistance) {
+                stretchVector.setLength(maxStretchDistance);
+            }
+            dragPosition.set(origin).add(stretchVector);
         }
     }
 
@@ -83,7 +88,7 @@ public class Slingshot {
         float gravity = -9.8f; // Adjust gravity as needed
 
         Vector2 currentPosition = new Vector2(origin);
-        for (float t = 0; t < 6; t += 0.3f) { // Adjust the range and step as needed
+        for (float t = 0; t < 4.5f; t += 0.3f) { // Adjust the range and step as needed
             float x = origin.x + velocityX * t;
             float y = origin.y + velocityY * t + 0.5f * gravity * t * t;
             shapeRenderer.circle(x, y, 2); // Draw a small circle at each point
