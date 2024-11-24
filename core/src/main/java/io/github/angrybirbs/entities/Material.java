@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import static io.github.angrybirbs.levels.Level.PPM;
 
 public abstract class Material {
-    protected final TiledMapTile tile;
+    public final TiledMapTile tile;
     protected Vector2 position;
     protected float width, height;
 
@@ -119,8 +119,18 @@ public abstract class Material {
     public void takeDamage(float by){    }
 
     public abstract float getHealth();
+    public abstract void setHealth(float health);
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
 
     public Body getBody() {
         return body;
     }
+
 }

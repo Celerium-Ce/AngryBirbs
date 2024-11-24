@@ -23,5 +23,9 @@ public class Ice extends Material {
     public float getHealth(){
         return health;
     }
+    @Override
+    public void setHealth(float health){
+        this.health = health;
+    }
 }
 

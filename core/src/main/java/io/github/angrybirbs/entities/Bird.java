@@ -142,5 +142,7 @@ public abstract class Bird implements power{
     }
 
     public void takeDamage(float damage) {  }
+    public abstract float getHealth();
+    public abstract void setHealth(float health);
 
 }

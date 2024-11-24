@@ -23,5 +23,9 @@ public class Steel extends Material {
     public float getHealth(){
         return health;
     }
+    @Override
+    public void setHealth(float health){
+        this.health = health;
+    }
 }
 

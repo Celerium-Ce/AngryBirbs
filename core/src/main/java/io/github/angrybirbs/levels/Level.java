@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Color;
 
 
+import io.github.angrybirbs.LoadSave;
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
@@ -45,7 +46,7 @@ public class Level implements Screen {
 
     private Body ground;
 
-    private int levelNum;
+    public int levelNum;
 
     protected List<Bird> birds;
     protected List<Pig> pigs;
@@ -195,6 +196,9 @@ public class Level implements Screen {
         saveButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                LoadSave.saveLevel(Level.this);
+                game.setScreen(new LevelsMenu(game));
+                dispose();
             }
         });
 
@@ -431,6 +435,17 @@ public class Level implements Screen {
         batch.end();
     }
 
+    public List<Material> getMaterials() {
+        return materials;
+    }
+
+    public List<Pig> getPigs() {
+        return pigs;
+    }
+
+    public List<Bird> getBirds() {
+        return birds;
+    }
 
     @Override
     public void dispose() {
@@ -444,5 +459,13 @@ public class Level implements Screen {
         for (Pig pig : pigs) {
             pig.dispose(world);
         }
+    }
+
+    public Slingshot getSlingshot() {
+        return slingshot;
+    }
+
+    public float getGroundY() {
+        return groundY;
     }
 }

@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import io.github.angrybirbs.LoadSave;
 import io.github.angrybirbs.Main;
 import com.badlogic.gdx.Gdx;
 import io.github.angrybirbs.entities.*;
@@ -29,6 +30,9 @@ import io.github.angrybirbs.misc.Slingshot;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -76,21 +80,24 @@ public class LoadMenu extends Menu{
 
         saves = new ArrayList<ImageTextButton>();
 
-        File saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
-        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".json"));
+            File saveDataDir = new File(Gdx.files.local("../SaveData").file().getAbsolutePath());
+        if (!(saveDataDir.exists())) {
+            saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
+        }
+        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".ser"));
 
         if (saveFiles != null) {
             Skin skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
             Table table = new Table();
             table.setFillParent(true);
             stage.addActor(table);
-
-            for (File file : saveFiles) {
+            for (int i = 0; i < saveFiles.length; i++) {
+                File file = saveFiles[i];
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
                 style.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/empty.png")));
 
-                ImageTextButton saveButton = new ImageTextButton(file.getName().substring(0, file.getName().indexOf(".")), style);
+                ImageTextButton saveButton = new ImageTextButton("Save " + (i + 1), style);
 
                 Table buttonTable = new Table();
                 buttonTable.add(saveButton.getImage()).expand().bottom().row();
@@ -99,14 +106,16 @@ public class LoadMenu extends Menu{
                 saveButton.clearChildren();
                 saveButton.add(buttonTable).expand().fill();
 
+                int finalI = i;
                 saveButton.addListener(new ChangeListener() {
                     @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        String levelNum = saveButton.getText().toString();
-
-                        Level level = loadLevelFromFile(file.getName());
-                        game.setScreen(level);
-                        System.out.println("Loading save: " + file.getName());
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        World world = new World(new Vector2(0, -9.8f), true);
+                        Level level = LoadSave.loadLevel(game, world, finalI + 1);
+                        if (level != null) {
+                            game.setScreen(level);
+                        }
+                        dispose();
                     }
                 });
 
@@ -133,96 +142,7 @@ public class LoadMenu extends Menu{
         }
     }
 
-    private Level loadLevelFromFile(String fileName) {
-        World world = new World(new Vector2(0, -9.8f), true);
-        Slingshot slingshot = null;
-        File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
 
-        if (!levelDataDir.exists()) {
-            levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
-        }
 
-        fileName = levelDataDir.getAbsolutePath() + "/" + fileName;
 
-        SpriteBatch batch = new SpriteBatch();
-        ;
-        TiledMap tiledMap = new TmxMapLoader().load(fileName);
-
-        OrthogonalTiledMapRenderer tiledMapRenderer;
-        OrthographicCamera camera = new OrthographicCamera();
-        ;
-        ArrayList<Bird> birds = new ArrayList<>();
-        ArrayList<Pig> pigs = new ArrayList<>();
-        ArrayList<Material> materials = new ArrayList<>();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        MapLayer objectLayer = tiledMap.getLayers().get("Ground");
-        MapObject groundObject = objectLayer.getObjects().get("Ground");
-        float groundY = 0;
-        if (groundObject != null) {
-            groundY = (float) groundObject.getProperties().get("y", Float.class);
-            System.out.println("Ground Y coordinate: " + groundY);
-        }
-        MapLayer layer = tiledMap.getLayers().get("Objects");
-        for (MapObject obj : layer.getObjects()) {
-            if (obj instanceof TiledMapTileMapObject) {
-                TiledMapTileMapObject tileObject = (TiledMapTileMapObject) obj;
-
-                // Get the position of the tile
-                float x = tileObject.getX();
-                float y = tileObject.getY();
-                TiledMapTile tile = tileObject.getTile();
-
-                // Check the properties to determine the type of object
-                String entityType = (String) tileObject.getProperties().get("type");
-                if ("Slingshot".equals(entityType)) {
-                    slingshot = new Slingshot(new Vector2(350, 300), tile, x, y);
-                    System.out.println("Loaded Slingshot at: (" + x + ", " + y + ")");
-                } else if ("Red".equals(entityType)) {
-                    birds.add(new Red(world, tile, x, y+32));
-                    System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
-                } else if ("Blue".equals(entityType)) {
-                    birds.add(new Blue(world, tile, x, y+32));
-                    System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
-                } else if ("Yellow".equals(entityType)) {
-                    birds.add(new Yellow(world, tile, x, y+32));
-                    System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
-                } else if ("Normal".equals(entityType)) {
-                    pigs.add(new Normal(world, tile, x, y));
-                    System.out.println("Loaded Normal Pig at: (" + x + ", " + y + ")");
-                } else if ("General".equals(entityType)) {
-                    pigs.add(new General(world, tile, x, y));
-                    System.out.println("Loaded General Pig at: (" + x + ", " + y + ")");
-                } else if ("King".equals(entityType)) {
-                    pigs.add(new King(world, tile, x, y));
-                    System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
-                } else if ("Wood".equals(entityType)) {
-                    materials.add(new Wood(tile, x, y, world));
-                    System.out.println("Loaded wood at: (" + x + ", " + y + ")");
-                } else if ("Ice".equals(entityType)) {
-                    materials.add(new Ice(tile, x, y, world));
-                    System.out.println("Loaded ice at: (" + x + ", " + y + ")");
-                } else if ("Steel".equals(entityType)) {
-                    materials.add(new Steel(tile, x, y, world));
-                    System.out.println("Loaded steel at: (" + x + ", " + y + ")");
-                }
-            }
-        }
-        sortBirds(birds);
-        return new Level(game, world, slingshot, birds, pigs, materials, 1, groundY);
-
-    }
-    public void sortBirds(ArrayList<Bird> birds) {
-        Collections.sort(birds, new Comparator<Bird>() {
-            @Override
-            public int compare(Bird b1, Bird b2) {
-                // First compare by x position (max x first)
-                int xComparison = Float.compare(b2.getPosition().x, b1.getPosition().x);
-                if (xComparison != 0) {
-                    return xComparison; // If x positions are different, sort by x
-                }
-                // If x positions are the same, compare by y position (min y first)
-                return 0;
-            }
-        });
-    }}
+}

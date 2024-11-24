@@ -105,6 +105,7 @@ public abstract class Pig {
     }
 
     public abstract float getHealth();
+    public abstract void setHealth(float health);
 
     public void setPosition(float x, float y) {
         this.position.set(x, y);

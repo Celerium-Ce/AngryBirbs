@@ -31,4 +31,12 @@ public class Red extends Bird implements power {
     public void usePower() {
         return;
     }
+    @Override
+    public float getHealth(){
+        return health;
+    }
+    @Override
+    public void setHealth(float health){
+        this.health = health;
+    }
 }

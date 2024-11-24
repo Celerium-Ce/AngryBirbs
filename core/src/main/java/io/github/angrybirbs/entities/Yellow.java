@@ -32,4 +32,12 @@ public class Yellow extends Bird implements power {
     public void usePower() {
         this.getBody().setLinearVelocity(this.getBody().getLinearVelocity().scl(2));
     }
+    @Override
+    public float getHealth(){
+        return health;
+    }
+    @Override
+    public void setHealth(float health){
+        this.health = health;
+    }
 }

@@ -30,4 +30,8 @@ public class King extends Pig {
     public float getHealth(){
         return health;
     }
+    @Override
+    public void setHealth(float health){
+        this.health = health;
+    }
 }

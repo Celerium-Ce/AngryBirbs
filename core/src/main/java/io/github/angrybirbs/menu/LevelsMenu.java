@@ -202,13 +202,13 @@ public class LevelsMenu extends Menu {
                         } else if ("King".equals(entityType)) {
                             pigs.add(new King(world, tile, x, y));
                             System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
-                        } else if ("Wood".equals(entityType)) {
+                        } else if ("WoodH".equals(entityType)||"WoodV".equals(entityType)) {
                             materials.add(new Wood(tile, x, y, world));
                             System.out.println("Loaded wood at: (" + x + ", " + y + ")");
-                        } else if ("Ice".equals(entityType)) {
+                        } else if ("IceH".equals(entityType)||"IceV".equals(entityType)) {
                             materials.add(new Ice(tile, x, y, world));
                             System.out.println("Loaded ice at: (" + x + ", " + y + ")");
-                        } else if ("Steel".equals(entityType)) {
+                        } else if ("SteelH".equals(entityType)||"SteelV".equals(entityType)) {
                             materials.add(new Steel(tile, x, y, world));
                             System.out.println("Loaded steel at: (" + x + ", " + y + ")");
                         }

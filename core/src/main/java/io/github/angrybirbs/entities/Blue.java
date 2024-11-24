@@ -34,4 +34,12 @@ public class Blue extends Bird {
         this.power = 30;
         this.getBody().setLinearVelocity(this.getBody().getLinearVelocity().scl(0.5f));
     }
+    @Override
+    public float getHealth(){
+        return health;
+    }
+    @Override
+    public void setHealth(float health){
+        this.health = health;
+    }
 }
