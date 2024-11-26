@@ -46,7 +46,16 @@ public class Blue extends Bird {
         aboveBlue.togglephysics();
         belowBlue.togglephysics();
 
-        Vector2 velocity = this.getBody().getLinearVelocity().scl(0.5f); // get and reduce velocity
+        // try to make it rotate a bit
+        //aboveBlue.getBody().setTransform(aboveBlue.getBody().getPosition(), 0.1f);
+        //belowBlue.getBody().setTransform(belowBlue.getBody().getPosition(), -0.1f);
+
+
+        Vector2 velocity = this.getBody().getLinearVelocity().scl(1f); // get and reduce velocity
+
+        //aboveBlue.getBody().setLinearVelocity(velocity.x, velocity.y + 20f);
+        //belowBlue.getBody().setLinearVelocity(velocity.x, velocity.y - 20f);
+
 
         // give them velocity
         this.getBody().setLinearVelocity(velocity);

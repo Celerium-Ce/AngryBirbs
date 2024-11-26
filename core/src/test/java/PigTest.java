@@ -93,7 +93,7 @@ public class PigTest extends HeadlessTest {
 
         // Test disposing of the pig
 
-        pig.dispose(world);
+        pig.dispose();
         assertNull(pig.getBody());
     }
 

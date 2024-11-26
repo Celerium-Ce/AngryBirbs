@@ -1,5 +1,9 @@
 # AngryBirbs
 
+AngryBirbs is an open-source clone of the popular game Angry Birds. The game is developed primarily using Java and LibGDX.
+
+![Gameplay GIf]()
+
 ## Running the Project
 
 ### Using IntelliJ IDEA
