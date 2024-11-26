@@ -369,7 +369,9 @@ public class Level implements Screen {
 //        slingshot.renderDraggableArea();
         slingshot.render(delta);
         slingshot.renderTrajectory();
-        world.step(1/60f, 6, 2);
+        if (!isPaused) {
+            world.step(1 / 60f, 6, 2);
+        }
         stage.act(delta);
         stage.draw();
 
