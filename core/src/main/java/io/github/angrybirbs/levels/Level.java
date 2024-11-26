@@ -2,15 +2,11 @@ package io.github.angrybirbs.levels;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -30,8 +26,6 @@ import io.github.angrybirbs.misc.GameContactListener;
 import io.github.angrybirbs.misc.Slingshot;
 import io.github.angrybirbs.misc.Slingshotinputprocessor;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,7 +42,7 @@ public class Level implements Screen {
 
     public int levelNum;
 
-    protected List<Bird> birds;
+    public static List<Bird> birds;
     protected List<Pig> pigs;
     protected List<Material> materials;
 
@@ -332,7 +326,7 @@ public class Level implements Screen {
         while (birdIterator.hasNext()) {
             Bird bird = birdIterator.next();
             bird.render(batch);
-            if (bird.isToBeRemoved()) {
+            if (bird.isDead()) {
                 bird.dispose();
                 birdIterator.remove();
                 if (slingshotinputprocessor.activebird == bird) {
@@ -345,8 +339,8 @@ public class Level implements Screen {
         while (pigIterator.hasNext()) {
             Pig pig = pigIterator.next();
             pig.render(batch);
-            if (pig.isToBeRemoved()) {
-                pig.dispose(world);
+            if (pig.isDead()) {
+                pig.dispose();
                 System.out.println(1);
                 pigIterator.remove();
             }
@@ -355,8 +349,8 @@ public class Level implements Screen {
         while (materialIterator.hasNext()) {
             Material material = materialIterator.next();
             material.render(batch);
-            if (material.isToBeRemoved()) {
-                material.dispose(world);
+            if (material.isDead()) {
+                material.dispose();
                 materialIterator.remove();
             }
         }
@@ -454,7 +448,7 @@ public class Level implements Screen {
             bird.dispose();
         }
         for (Pig pig : pigs) {
-            pig.dispose(world);
+            pig.dispose();
         }
     }
 
@@ -462,6 +456,9 @@ public class Level implements Screen {
         return slingshot;
     }
 
+    public static void addBird(Bird bird){
+        birds.add(bird);
+    }
     public float getGroundY() {
         return groundY;
     }

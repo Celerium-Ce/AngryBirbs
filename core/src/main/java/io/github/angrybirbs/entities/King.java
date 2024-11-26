@@ -4,26 +4,20 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class King extends Pig {
-    private int power;
-    private float health = 15f;
-
+    private float health;
 
     public King(World world, TiledMapTile tile, float x, float y) {
         super(world,tile,x,y);
-        this.power = 10;
-    }
-
-    public int getPower() {
-        return power;
+        this.health = 15;
     }
 
     @Override
     public void takeDamage(float damage){
-        health-=damage;
-        if (health <= 0){
+        setHealth(getHealth() - damage);
+        if (getHealth() <= 0){
             setDead();
         }
-        System.out.println("King took " + damage + " damage and has " + health + " health left");
+        System.out.println("King took " + damage + " damage and has " + getHealth() + " health left");
     }
 
     @Override

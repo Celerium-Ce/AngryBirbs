@@ -36,22 +36,19 @@ public class GameContactListener implements ContactListener {
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
 
-        // disable contact of inactive birds and materials on bird side
+        // disable contact of birds and materials on bird side
 
         Object userDataA = contact.getFixtureA().getUserData();
         Object userDataB = contact.getFixtureB().getUserData();
 
-        // Get the active bird
-        Bird activeBird = Slingshotinputprocessor.getActiveBird();
         boolean isBirdA = userDataA instanceof Bird;
         boolean isBirdB = userDataB instanceof Bird;
 
-        // Check if the objects are birds and if they are not the active bird
-        if (isBirdA && !activeBird.equals(userDataA)) {
-            contact.setEnabled(false);
-        } else if (isBirdB && !activeBird.equals(userDataB)) {
+        // Check if the objects are birds
+        if (isBirdA && isBirdB) {
             contact.setEnabled(false);
         }
+
 
         // Disable contact of materials on the bird side
         boolean isMaterialA = userDataA instanceof Material;

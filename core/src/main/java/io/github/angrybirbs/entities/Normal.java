@@ -4,24 +4,20 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
 public class Normal extends Pig {
-    private int power;
-    private float health = 2.5f;
+    private float health;
 
     public Normal(World world, TiledMapTile tile, float x, float y) {
         super(world,tile,x,y);
-        this.power = 10;
+        this.health = 2.5f;
     }
 
-    public int getPower() {
-        return power;
-    }
     @Override
     public void takeDamage(float damage){
-        health-=damage;
-        if (health <= 0){
+        setHealth(getHealth() - damage);
+        if (getHealth() <= 0){
             setDead();
         }
-        System.out.println("Normal took " + damage + " damage and has " + health + " health left");
+        System.out.println("Normal took " + damage + " damage and has " + getHealth() + " health left");
     }
 
     @Override

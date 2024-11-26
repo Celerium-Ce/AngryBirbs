@@ -10,15 +10,14 @@ import com.badlogic.gdx.physics.box2d.*;
 import static io.github.angrybirbs.levels.Level.PPM;
 
 public abstract class Material {
-    public final TiledMapTile tile;
-    protected Vector2 position;
-    protected float width, height;
+    private final TiledMapTile tile;
+    private Vector2 position;
+    private float width, height;
 
     private Body body;
     private World world;
 
     private boolean isDead;
-
 
     public Material(TiledMapTile tile, float x, float y,World world, float density, float friction, float restitution) {
         this.tile = tile;
@@ -30,12 +29,12 @@ public abstract class Material {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(position.x / PPM + width / (2 * PPM), position.y / PPM + height / (2 * PPM));
+        bodyDef.position.set(getPosition().x / PPM + width / (2 * PPM), getPosition().y / PPM + height / (2 * PPM));
 
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / (2 * PPM), height / (2 * PPM));
+        shape.setAsBox(getWidth() / (2 * PPM), getHeight() / (2 * PPM));
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -43,10 +42,10 @@ public abstract class Material {
         fixtureDef.friction = friction;
         fixtureDef.restitution = restitution;
 
-        Fixture fixture = body.createFixture(fixtureDef);
+        Fixture fixture = getBody().createFixture(fixtureDef);
 
         fixture.setUserData(this);
-        body.setUserData(this);
+        getBody().setUserData(this);
 
         shape.dispose();
 
@@ -54,72 +53,78 @@ public abstract class Material {
     }
 
     public void render(SpriteBatch batch) {
-        position.set(body.getPosition().x * PPM, body.getPosition().y * PPM);
+        setPosition(getBody().getPosition().x * PPM, getBody().getPosition().y * PPM);
 
-
-        if (!isDead) {
-            TextureRegion region = tile.getTextureRegion(); // Get the TextureRegion from TiledMapTile
+        if (!isDead()) {
+            TextureRegion region = getTile().getTextureRegion();
             if (region != null) {
-                float rotation = (float) Math.toDegrees(body.getAngle()); // Get the rotation angle in degrees
+                float rotation = (float) Math.toDegrees(getBody().getAngle()); // Get the rotation angle in degrees
+
                 batch.draw(region,
-                    position.x - width / 2, position.y - height / 2, // Position
-                    width / 2, height / 2, // Origin for rotation
-                    width, height, // Width and height
+                    getPosition().x - getWidth() / 2, getPosition().y - getHeight() / 2, // Position
+                    getWidth() / 2, getHeight() / 2, // Origin for rotation
+                    getWidth(), getHeight(), // Width and height
                     1, 1, // Scale
                     rotation); // Rotation angle
             }
+            }
+        }
+
+    private TiledMapTile getTile() {
+        return tile;
+    }
+
+    public void dispose () {
+        if (getWorld() != null && getBody() != null) {
+            for (Fixture fixture : getBody().getFixtureList()) {
+                getBody().destroyFixture(fixture);
+            }
+            getWorld().destroyBody(getBody());
+            setBody(null);
+            Gdx.app.log("Bird", "Body disposed successfully");
+        } else {
+            Gdx.app.log("Bird", "Dispose called on a null body or world");
         }
     }
 
 
-    public void dispose(World world) {
-        if (world != null && body != null) {
-            // Safely destroy all fixtures associated with the body
-            for (Fixture fixture : body.getFixtureList()) {
-                body.destroyFixture(fixture);
-            }
-            // Destroy the body itself
-            world.destroyBody(body);
-            body = null; // Nullify the reference to avoid future use
-            Gdx.app.log("Material", "Body disposed successfully");
-        } else {
-            Gdx.app.log("Material", "Dispose called on a null body or world");
-        }
+    public boolean isDead() {
+        return isDead;
+    }
+    public void setDead(){
+        isDead = true;
     }
 
     public Vector2 getPosition() {
         return position;
     }
-
     public void setPosition(float x, float y) {
         this.position.set(x, y);
     }
 
-    public boolean isToBeRemoved() {
-        return isDead;
+    public Body getBody() {
+        return body;
+    }
+    public void setBody(Body body) {
+        this.body = body;
     }
 
-    /*private void checkForClick() {
-        if (Gdx.input.justTouched()) {
-            float clickX = Gdx.input.getX();
-            float clickY = Gdx.graphics.getHeight() - Gdx.input.getY(); // as libgdx has 0,0 at bottom left while graphic systems usually have top left
-
-            if (clickX >= position.x && clickX <= position.x + width &&
-                clickY >= position.y && clickY <= position.y + height) {
-                isDead = true;
-            }
-        }
-    }*/
     public Vector2 getVelocity() {
-        return body.getLinearVelocity();
+        return getBody().getLinearVelocity();
     }
-    public void setDead() {
-        isDead = true;
+    public void setVelocity(Vector2 velocity) {
+        getBody().setLinearVelocity(velocity);
     }
-    public void takeDamage(float by){    }
 
-    public abstract float getHealth();
-    public abstract void setHealth(float health);
+    public void reduceSpeed(float factor) {
+        Vector2 velocity = getVelocity();
+        getBody().setLinearVelocity(velocity.scl(factor));
+    }
+
+
+    public World getWorld() {
+        return world;
+    }
 
     public float getWidth() {
         return width;
@@ -129,8 +134,9 @@ public abstract class Material {
         return height;
     }
 
-    public Body getBody() {
-        return body;
-    }
+
+    public void takeDamage(float damage) {  }
+    public abstract float getHealth();
+    public abstract void setHealth(float health);
 
 }

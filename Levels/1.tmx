@@ -62,8 +62,8 @@
   <object id="140" type="Normal" gid="5" x="1427.74" y="908" width="64" height="64"/>
   <object id="141" type="Slingshot" gid="7" x="353.19" y="908" width="64" height="155"/>
   <object id="142" type="Red" gid="6" x="350" y="795" width="64" height="64"/>
-  <object id="144" type="Yellow" gid="11" x="190" y="908" width="64" height="64"/>
-  <object id="145" type="Blue" gid="1" x="110" y="908" width="64" height="64"/>
+  <object id="144" type="Blue" gid="1" x="190" y="908" width="64" height="64"/>
+  <object id="145" type="Yellow" gid="11" x="110" y="908" width="64" height="64"/>
   <object id="146" type="Blue" gid="1" x="270" y="908" width="64" height="64"/>
  </objectgroup>
 </map>

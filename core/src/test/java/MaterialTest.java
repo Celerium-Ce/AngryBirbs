@@ -74,7 +74,7 @@ public class MaterialTest extends HeadlessTest {
 
         // Test disposing of the material
 
-        material.dispose(world);
+        material.dispose();
         assertNull(material.getBody());
     }
 

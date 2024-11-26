@@ -70,8 +70,8 @@
   <object id="116" type="SteelH" gid="9" x="1309.4" y="764" width="128" height="16"/>
   <object id="121" type="Red" gid="7" x="360.509" y="506.995" width="64" height="64"/>
   <object id="122" type="Slingshot" gid="8" x="363.509" y="619.995" width="64" height="155"/>
-  <object id="123" type="Yellow" gid="12" x="171.509" y="763.995" width="64" height="64"/>
-  <object id="124" type="Blue" gid="1" x="61.448" y="907.635" width="64" height="64"/>
+  <object id="123" type="Blue" gid="1" x="171.509" y="763.995" width="64" height="64"/>
+  <object id="124" type="Yellow" gid="12" x="61.448" y="907.635" width="64" height="64"/>
   <object id="125" type="Blue" gid="1" x="235.509" y="763.995" width="64" height="64"/>
   <object id="126" type="SteelV" gid="10" x="443.509" y="907.995" width="16" height="128"/>
   <object id="127" type="SteelV" gid="10" x="331.509" y="907.995" width="16" height="128"/>

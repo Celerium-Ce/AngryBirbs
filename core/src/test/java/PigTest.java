@@ -66,7 +66,7 @@ public class PigTest extends HeadlessTest {
         // Test setting the pig to dead
 
         pig.setDead();
-        assertTrue(pig.isToBeRemoved());
+        assertTrue(pig.isDead());
     }
 
     @Test

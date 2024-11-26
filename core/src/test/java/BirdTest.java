@@ -68,7 +68,7 @@ public class BirdTest extends HeadlessTest {
         // Test setting the bird to dead
 
         bird.setDead();
-        assertTrue(bird.isToBeRemoved());
+        assertTrue(bird.isDead());
     }
 
     @Test
