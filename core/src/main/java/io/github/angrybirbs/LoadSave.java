@@ -90,6 +90,7 @@ public class LoadSave {
             materialState.renderedX = material.getPosition().x;
             materialState.renderedY = material.getPosition().y;
             materialState.rotation = material.getBody().getAngle();
+            materialState.health = material.getHealth();
             materialState.isH = material.getWidth()>material.getHeight();
             state.materials.add(materialState);
         }
