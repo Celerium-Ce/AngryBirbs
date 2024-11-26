@@ -10,9 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import io.github.angrybirbs.Main;
-
+// necessary imports
 /** First screen of the application. Displayed after the application is created. */
 public class MainMenu extends Menu {
+
+    // MainMenu class that extends Menu
+    // This class is used to create the main menu of the game
+
     private TextureRegion bgTextureReigon;
     private TextureRegionDrawable bgDrawable;
     private Texture titletext;
@@ -23,7 +27,13 @@ public class MainMenu extends Menu {
     private ImageButton load;
 
     public MainMenu(Main game) {
+
+        // Constructor for the MainMenu class
+
+        // Calls the constructor of the Menu class
         super(game);
+
+        // Sets the background texture of the main menu
         backgroundTexture = new Texture(Gdx.files.internal("MainMenuBG.png"));
         bgTextureReigon = new TextureRegion(backgroundTexture);
         bgDrawable = new TextureRegionDrawable(bgTextureReigon);
@@ -32,6 +42,7 @@ public class MainMenu extends Menu {
         bgImage.setZIndex(0);
         stage.addActor(bgImage);
 
+        // Sets the title image of the main menu
         titletext = new Texture(Gdx.files.internal("Buttons/AngryBirbs.png"));
         titleimage = new Image(new TextureRegionDrawable(new TextureRegion(titletext)));
         titleimage.setZIndex(1);
@@ -42,7 +53,17 @@ public class MainMenu extends Menu {
             Gdx.graphics.getHeight() / 2f - titleimage.getHeight() / 2 + Gdx.graphics.getHeight() / 4f
         );
 
+        /*
+        How a button is created:
+        new ImageButton is created with two TextureRegionDrawables as parameters
+        The first TextureRegionDrawable is the image of the button when it is not pressed
+        The second TextureRegionDrawable is the image of the button when it is pressed
+        The button is then added to the stage
+        A ChangeListener is added to the button to listen for changes
+         */
 
+
+        // Sets the play button of the main menu
         play = new ImageButton(
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/levels.png")))),
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/levelsp.png"))))
@@ -62,7 +83,7 @@ public class MainMenu extends Menu {
             }
         });
 
-
+        // Sets the exit button of the main menu
         exit = new ImageButton(
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/exit.png")))),
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/exit.png"))))
@@ -84,6 +105,7 @@ public class MainMenu extends Menu {
             }
         });
 
+        // Sets the load button of the main menu
         load = new ImageButton(
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/LoadGame.png")))),
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/LoadGamep.png"))))

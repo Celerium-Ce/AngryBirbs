@@ -35,6 +35,10 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class LevelsMenu extends Menu {
+
+    // LevelsMenu class that extends Menu
+    // This class is used to create the levels menu of the game
+
     private Texture backgroundTexture;
     private TextureRegion bgTextureRegion;
     private TextureRegionDrawable bgDrawable;
@@ -43,7 +47,13 @@ public class LevelsMenu extends Menu {
     private ArrayList<ImageTextButton> levels;
 
     public LevelsMenu(Main game) {
+
+        // Constructor for the LevelsMenu class
+
+        // Calls the constructor of the Menu class
         super(game);
+
+        // Sets the background texture of the levels menu
         backgroundTexture = new Texture(Gdx.files.internal("MainMenuBG.png"));
         bgTextureRegion = new TextureRegion(backgroundTexture);
         bgDrawable = new TextureRegionDrawable(bgTextureRegion);
@@ -52,6 +62,16 @@ public class LevelsMenu extends Menu {
         bgImage.setZIndex(0);
         stage.addActor(bgImage);
 
+        /*
+        How a button is created:
+        new ImageButton is created with two TextureRegionDrawables as parameters
+        The first TextureRegionDrawable is the image of the button when it is not pressed
+        The second TextureRegionDrawable is the image of the button when it is pressed
+        The button is then added to the stage
+        A ChangeListener is added to the button to listen for changes
+        */
+
+        // Sets the back button of the levels menu
         back = new ImageButton(
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png")))),
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png"))))
@@ -69,22 +89,29 @@ public class LevelsMenu extends Menu {
         back.setPosition(0 - Gdx.graphics.getWidth() / 50f, 0);
         stage.addActor(back);
 
+
         levels = new ArrayList<ImageTextButton>();
 
+        // Load the levels from the levels directory
         File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
         if (!(levelDataDir.exists())) {
             levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
         }
 
+        // Get all the files in the levels directory
         File[] levelFiles = levelDataDir.listFiles((dir, name) -> name.endsWith(".tmx"));
 
+        // If there are levels in the directory
         if (levelFiles != null) {
+            // create table and add buttons for each level
             Skin skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
             Table table = new Table();
             table.setFillParent(true);
             stage.addActor(table);
 
             for (int i = 0; i < levelFiles.length; i++) {
+
+                // Create a button for each level
                 File file = levelFiles[i];
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
@@ -117,9 +144,12 @@ public class LevelsMenu extends Menu {
                 if (levels.size() % 5 == 0) {
                     table.row();
                 }
+                // basically the same button adding process but also in a grid for viewing saves
             }
         }
         else {
+
+            // If there are no levels in the directory, display a message
             ImageButton noLevels = new ImageButton(
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png")))),
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png"))))
@@ -135,41 +165,63 @@ public class LevelsMenu extends Menu {
     }
 
     public static Level loadLevelFromFile(int levelNum) {
+
+        // Method to load a level from a file
+        // This method is used to load a level from a file based on the level number
+        // It finds the level file in the levels directory and creates a new level object
+        // with the data from the file it iterates through the objects in the layer and creates objects based on the data from the tilemaps
+        // and adds them to the level object
+
+        // Create a new world
         World world = new World(new Vector2(0, -9.8f), true);
+        // Create a new slingshot
         Slingshot slingshot = null;
+        // Get the level file
         File levelDataDir = new File(Gdx.files.local("../Levels").file().getAbsolutePath());
 
+        // If the level file is not found in the levels directory, try the local directory
         if (!levelDataDir.exists()) {
             levelDataDir = new File(Gdx.files.local("Levels").file().getAbsolutePath());
         }
 
+        // Get the file name
         String fileName = levelDataDir.getAbsolutePath() + "/" + levelNum + ".tmx";
         File levelFile = new File(fileName);
 
+        // If the level file is not found, return null
         if (!levelFile.exists()) {
             System.out.println("Level file not found: " + fileName);
             return null;
         }
+
+        // Create a new SpriteBatch
         SpriteBatch batch = new SpriteBatch();
 
+        // Load the TiledMap from the file
         TiledMap tiledMap = new TmxMapLoader().load(fileName);
 
+        // Create a new OrthogonalTiledMapRenderer
         OrthogonalTiledMapRenderer tiledMapRenderer;
         OrthographicCamera camera = new OrthographicCamera();
 
+        // Create an ArrayList for the birds, pigs, and materials
         ArrayList<Bird> birds = new ArrayList<>();
         ArrayList<Pig> pigs = new ArrayList<>();
         ArrayList<Material> materials = new ArrayList<>();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        // Get the ground layer
         MapLayer objectLayer = tiledMap.getLayers().get("Ground");
         MapObject groundObject = objectLayer.getObjects().get("Ground");
         float groundY = 0;
+        // Get the Y coordinate of the ground
         if (groundObject != null) {
             groundY = (float) groundObject.getProperties().get("y", Float.class);
             System.out.println("Ground Y coordinate: " + groundY);
         }
                 MapLayer layer = tiledMap.getLayers().get("Objects");
+
+                // Iterate through the objects in the layer
                 for (MapObject obj : layer.getObjects()) {
                     if (obj instanceof TiledMapTileMapObject) {
                         TiledMapTileMapObject tileObject = (TiledMapTileMapObject) obj;
@@ -180,6 +232,7 @@ public class LevelsMenu extends Menu {
                         TiledMapTile tile = tileObject.getTile();
 
                         // Check the properties to determine the type of object
+                        // Basically calling constructors for the objects based on data from tilemaps
                         String entityType = (String) tileObject.getProperties().get("type");
                         if ("Slingshot".equals(entityType)) {
                             slingshot = new Slingshot(new Vector2(x+29f, y+152f), tile, x+32, y);
@@ -219,6 +272,9 @@ public class LevelsMenu extends Menu {
 
     }
     public static void sortBirds(ArrayList<Bird> birds) {
+
+        // Method to sort the birds based on their x position
+
         Collections.sort(birds, new Comparator<Bird>() {
             @Override
             public int compare(Bird b1, Bird b2) {
