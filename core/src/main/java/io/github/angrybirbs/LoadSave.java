@@ -18,7 +18,14 @@ import java.util.*;
 
 public class LoadSave {
 
+    // LoadSave class that contains methods to save and load levels
+    // This class is used to save and load levels of the game
+
+
     private static String getFileName(int saveNum){
+
+        // Method to get the file name of the save file
+
         File levelDataDir = new File(Gdx.files.local("../SaveData").file().getAbsolutePath());
         if (!(levelDataDir.exists())) {
             levelDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
@@ -31,6 +38,14 @@ public class LoadSave {
     }
 
     public static void saveLevel(Level level) {
+
+        // Method to save the level
+
+        // Serializes the current level state to a file.
+        // Includes the slingshot, birds, pigs, and materials,
+        // capturing their types, positions, rotations, and other attributes.
+
+
         String fileName = getFileName(-1);
         LevelState state = new LevelState();
         state.groundY = level.getGroundY();
@@ -79,6 +94,7 @@ public class LoadSave {
             state.materials.add(materialState);
         }
 
+        // Writes the state to a file
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeObject(state);
         } catch (IOException e) {
@@ -87,6 +103,18 @@ public class LoadSave {
     }
 
     public static Level loadLevel(Main game, World world, int saveNum) {
+
+        // Method to load a level
+        // Deserializes the level state from a file and creates the level from the state
+
+
+        // Loads a saved level by deserializing the level state from a file.
+        // Recreates the level by loading the slingshot, birds, pigs, and materials
+        // from their saved states, including their positions, types, health, and rotations.
+        // Also loads the associated tiled map for the level and restores the layout
+        // using tile types and properties. Returns a reconstructed Level object.
+
+
         LevelState state = null;
         String fileName = getFileName(saveNum);
 
@@ -209,6 +237,8 @@ public class LoadSave {
 
     public static class LevelState implements Serializable {
 
+        // LevelState class that contains the state of the level
+
         public List<ObjectState> birds = new ArrayList<>();
         public List<ObjectState> pigs = new ArrayList<>();
         public List<ObjectState> materials = new ArrayList<>();
@@ -219,6 +249,7 @@ public class LoadSave {
 
     public static class ObjectState implements Serializable {
 
+        // ObjectState class that contains the state of an object
 
         public String type;
         public float bodyX;
