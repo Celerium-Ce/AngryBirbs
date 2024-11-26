@@ -6,13 +6,20 @@ import com.badlogic.gdx.physics.box2d.*;
 import io.github.angrybirbs.entities.Bird;
 import io.github.angrybirbs.entities.Material;
 import io.github.angrybirbs.entities.Pig;
+// necessary imports
 
+// This class is responsible for handling the collision events between the game objects.
 public class GameContactListener implements ContactListener {
-    private static final float DAMAGE_MULTIPLIER = 0.1f;
-    private static final float MIN_VELOCITY = 0.5f;
+
+    // Constants
+    private static final float DAMAGE_MULTIPLIER = 0.1f; // The damage multiplier for the impact force
+    private static final float MIN_VELOCITY = 0.5f; // The minimum velocity for the objects to be considered moving
 
     @Override
     public void beginContact(Contact contact) {
+
+        // Get the user data of the fixtures involved in the collision ad log them for debugging purposes
+
         Object userDataA = contact.getFixtureA().getUserData();
         Object userDataB = contact.getFixtureB().getUserData();
 
@@ -27,23 +34,30 @@ public class GameContactListener implements ContactListener {
     }
 
     @Override
-    public void preSolve(Contact contact, Manifold oldManifold) { // disable contact of inactive birds and materials on bird side
+    public void preSolve(Contact contact, Manifold oldManifold) {
+
+        // disable contact of inactive birds and materials on bird side
+
         Object userDataA = contact.getFixtureA().getUserData();
         Object userDataB = contact.getFixtureB().getUserData();
 
+        // Get the active bird
         Bird activeBird = Slingshotinputprocessor.getActiveBird();
         boolean isBirdA = userDataA instanceof Bird;
         boolean isBirdB = userDataB instanceof Bird;
 
+        // Check if the objects are birds and if they are not the active bird
         if (isBirdA && !activeBird.equals(userDataA)) {
             contact.setEnabled(false);
         } else if (isBirdB && !activeBird.equals(userDataB)) {
             contact.setEnabled(false);
         }
 
+        // Disable contact of materials on the bird side
         boolean isMaterialA = userDataA instanceof Material;
         boolean isMaterialB = userDataB instanceof Material;
 
+        // Check if the objects are materials and if they are on the bird side
         if (isMaterialA) {
             Material materialA = (Material) userDataA;
             if (materialA.getPosition().x < 500) {
@@ -52,6 +66,7 @@ public class GameContactListener implements ContactListener {
             }
         }
 
+        // Check if the objects are materials and if they are on the bird side
         if (isMaterialB) {
             Material materialB = (Material) userDataB;
             if (materialB.getPosition().x < 500) {
@@ -63,14 +78,21 @@ public class GameContactListener implements ContactListener {
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-        float impactForce = impulse.getNormalImpulses()[0];
 
+        // Calculate the impact force and apply damage to the objects involved in the collision
+
+        float impactForce = impulse.getNormalImpulses()[0]; // Get the normal impulse from the impulse
+
+
+        //Get the user data of the fixtures involved in the collision
         Object userDataA = contact.getFixtureA().getUserData();
         Object userDataB = contact.getFixtureB().getUserData();
 
+        // Apply damage to the objects
         applyDamage(userDataA, userDataB, impactForce);
         applyDamage(userDataB, userDataA, impactForce);
 
+        // For the bird reduce speed and kill if speed is less than minimum velocity
         if ((userDataA instanceof Bird) || (userDataB instanceof Bird)) {
             Bird bird = (userDataA instanceof Bird) ? (Bird) userDataA : (Bird) userDataB;
             float friction = getFriction(userDataA, userDataB);
@@ -81,6 +103,7 @@ public class GameContactListener implements ContactListener {
             }
         }
 
+        // For the pig reduce speed and set velocity to zero if speed is less than minimum velocity
         if ((userDataA instanceof Pig) || (userDataB instanceof Pig)) {
             Pig pig = (userDataA instanceof Pig) ? (Pig) userDataA : (Pig) userDataB;
             float friction = getFriction(userDataA, userDataB);
@@ -93,6 +116,9 @@ public class GameContactListener implements ContactListener {
     }
 
     private float getFriction(Object userDataA, Object userDataB) {
+
+        // Get the friction of the material object
+
         if ((userDataA instanceof Material) || (userDataB instanceof Material)) {
             Material Material = (userDataA instanceof Material) ? (Material) userDataA : (Material) userDataB;
             Body otherBody = Material.getBody();
@@ -107,8 +133,13 @@ public class GameContactListener implements ContactListener {
     }
 
     private void applyDamage(Object source, Object target, float impactForce) {
+
+        // Apply damage to the target object based on the impact force and relative velocity of the source and target objects
+
+        // Check if the source and target objects are not null
         if (source == null || target == null) return;
 
+        // Get the velocity of the source and target objects
         Vector2 velocityA = ((source instanceof Bird) || (source instanceof Pig) || (source instanceof Material))
             ? ((source instanceof Bird) ? ((Bird) source).getBody()
             : (source instanceof Pig) ? ((Pig) source).getBody()
@@ -121,16 +152,24 @@ public class GameContactListener implements ContactListener {
             : ((Material) target).getBody()).getLinearVelocity()
             : new Vector2(0, 0);
 
+        // Calculate the relative velocity of the source and target objects
         float relativeVelocity = velocityA.sub(velocityB).len();
 
+        // Check if the relative velocity is greater than the minimum velocity
         if (relativeVelocity >= MIN_VELOCITY) {
+            // Calculate the damage based on the impact force and relative velocity
             int calculatedDamage = (int) (impactForce * DAMAGE_MULTIPLIER);
 
+            // Apply the damage to the target object
             if (target instanceof Pig) {
+                // Cast the target object to Pig
                 Pig pig = (Pig) target;
+                // Apply the damage to the pig
                 pig.takeDamage(calculatedDamage);
             } else if (target instanceof Material) {
+                // Cast the target object to Material
                 Material material = (Material) target;
+                // Apply the damage to the material
                 material.takeDamage(calculatedDamage);
             }
         }
