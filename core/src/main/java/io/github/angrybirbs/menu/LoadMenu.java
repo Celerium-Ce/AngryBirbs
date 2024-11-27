@@ -1,38 +1,28 @@
 package io.github.angrybirbs.menu;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
+import io.github.angrybirbs.misc.LoadSave;
 import io.github.angrybirbs.Main;
-import com.badlogic.gdx.Gdx;
-import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.levels.Level;
 
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+// necessary imports
 
 public class LoadMenu extends Menu{
+
+    // LoadMenu class that extends Menu
+    // This class is used to create the load menu of the game
+    // This menu is used to load saved games and delete them
 
     private TextureRegion bgTextureReigon;
     private TextureRegionDrawable bgDrawable;
@@ -42,7 +32,13 @@ public class LoadMenu extends Menu{
     private int saveFileCount = 0;
 
     public LoadMenu(Main game) {
+
+        // Constructor for the LoadMenu class
+
+        // Calls the constructor of the Menu class
         super(game);
+
+        // Sets the background texture of the load menu
         backgroundTexture = new Texture(Gdx.files.internal("MainMenuBG.png"));
         bgTextureReigon = new TextureRegion(backgroundTexture);
         bgDrawable = new TextureRegionDrawable(bgTextureReigon);
@@ -51,6 +47,16 @@ public class LoadMenu extends Menu{
         bgImage.setZIndex(0);
         stage.addActor(bgImage);
 
+        /*
+        How a button is created:
+        new ImageButton is created with two TextureRegionDrawables as parameters
+        The first TextureRegionDrawable is the image of the button when it is not pressed
+        The second TextureRegionDrawable is the image of the button when it is pressed
+        The button is then added to the stage
+        A ChangeListener is added to the button to listen for changes
+         */
+
+        // Sets the back button of the load menu
         back = new ImageButton(
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png")))),
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png"))))
@@ -73,24 +79,34 @@ public class LoadMenu extends Menu{
 
         stage.addActor(back);
 
+
+        // Load the save files a
         saves = new ArrayList<ImageTextButton>();
 
-        File saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
-        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".json"));
+        // Load the save files
+        File saveDataDir = new File(Gdx.files.local("../SaveData").file().getAbsolutePath());
+        if (!(saveDataDir.exists())) {
+            saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
+        }
+        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".ser"));
 
+        // If there are save files, create buttons for each save file
         if (saveFiles != null) {
             Skin skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
             Table table = new Table();
             table.setFillParent(true);
             stage.addActor(table);
+            for (int i = 0; i < saveFiles.length; i++) {
+                File file = saveFiles[i];
 
-            for (File file : saveFiles) {
+                // Create a button for each save file
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
                 style.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/empty.png")));
 
-                ImageTextButton saveButton = new ImageTextButton(file.getName().substring(0, file.getName().indexOf(".")), style);
+                ImageTextButton saveButton = new ImageTextButton("Save " + (i + 1), style);
 
+                // Create a table to hold the button and its label
                 Table buttonTable = new Table();
                 buttonTable.add(saveButton.getImage()).expand().bottom().row();
                 buttonTable.add(saveButton.getLabel()).expand().center().padBottom(10f);
@@ -98,19 +114,44 @@ public class LoadMenu extends Menu{
                 saveButton.clearChildren();
                 saveButton.add(buttonTable).expand().fill();
 
+                int finalI = i;
+                // Add a listener to the button to load the save file
                 saveButton.addListener(new ChangeListener() {
                     @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        String levelNum = saveButton.getText().toString();
-
-                        Level level = loadLevelFromFile(file.getName());
-                        game.setScreen(level);
-                        System.out.println("Loading save: " + file.getName());
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        World world = new World(new Vector2(0, -9.8f), true);
+                        Level level = LoadSave.loadLevel(game, world, finalI + 1);
+                        if (level != null) {
+                            game.setScreen(level);
+                        }
+                        dispose();
                     }
                 });
 
+                ImageButton.ImageButtonStyle deleteStyle = new ImageButton.ImageButtonStyle();
+                deleteStyle.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/del.png")));
+                ImageButton deleteButton = new ImageButton(deleteStyle);
+
+                // Add a listener to the delete button to delete the save file
+                deleteButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        if (file.delete()) {
+                            System.out.println("Save file " + (finalI + 1) + " deleted successfully.");
+                            game.setScreen(new LoadMenu(game));
+                            dispose();
+                        } else {
+                            System.out.println("Failed to delete save file " + (finalI + 1) + ".");
+                        }
+                    }
+                });
+
+                Table combinedTable = new Table();
+                combinedTable.add(saveButton).size(100, 100);
+                combinedTable.add(deleteButton).size(35, 35).top().left();
+
                 saves.add(saveButton);
-                table.add(saveButton).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
+                table.add(combinedTable).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
 
                 if (saves.size() % 5 == 0) {
                     table.row();
@@ -118,6 +159,7 @@ public class LoadMenu extends Menu{
             }
         }
         else {
+            // If there are no save files, display a message
             ImageButton noSaves = new ImageButton(
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png")))),
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png"))))
@@ -132,67 +174,7 @@ public class LoadMenu extends Menu{
         }
     }
 
-    private Level loadLevelFromFile(String fileName) {
-        World world = new World(new Vector2(0, -9.8f), true);
-        fileName = "Levels/" + fileName;
-        SpriteBatch batch = new SpriteBatch();;
-        TiledMap tiledMap = new TmxMapLoader().load(fileName);
-        OrthogonalTiledMapRenderer tiledMapRenderer;
-        OrthographicCamera camera = new OrthographicCamera();;
-        ArrayList<Bird> birds = new ArrayList<>();
-        ArrayList<Pig> pigs = new ArrayList<>();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
-        MapLayer layer = tiledMap.getLayers().get("Objects"); // Change to your object layer name
-        for (MapObject obj : layer.getObjects()) {
-            if (obj instanceof TiledMapTileMapObject) {
-                TiledMapTileMapObject tileObject = (TiledMapTileMapObject) obj;
 
-                // Get the position of the tile
-                float x = tileObject.getX();
-                float y = tileObject.getY();
-                TiledMapTile tile = tileObject.getTile();
 
-                // Check the properties to determine the type of object
-                String entityType = (String) tileObject.getProperties().get("type");
-
-                if ("Red".equals(entityType)) {
-                    birds.add(new Red(world, tile, (int)x, (int)y));
-                    System.out.println("Loaded Red Bird at: (" + x + ", " + y + ")");
-                } else if ("Blue".equals(entityType)) {
-                    birds.add(new Blue(world, tile, (int)x, (int)y));
-                    System.out.println("Loaded Blue Bird at: (" + x + ", " + y + ")");
-                } else if ("Yellow".equals(entityType)) {
-                    birds.add(new Yellow(world, tile, (int)x, (int)y));
-                    System.out.println("Loaded Yellow Bird at: (" + x + ", " + y + ")");
-                } else if ("Normal".equals(entityType)) {
-                    pigs.add(new Normal(world, tile, (int)x, (int)y));
-                    System.out.println("Loaded Normal Pig at: (" + x + ", " + y + ")");
-                } else if ("General".equals(entityType)) {
-                    pigs.add(new General(world, tile, (int)x, (int)y));
-                    System.out.println("Loaded General Pig at: (" + x + ", " + y + ")");
-                } else if ("King".equals(entityType)) {
-                    pigs.add(new King(world, tile, (int)x, (int)y));
-                    System.out.println("Loaded King Pig at: (" + x + ", " + y + ")");
-                }
-            }
-        }
-        sortBirds(birds);
-        return new Level(game, world, birds, pigs, 1);
-
-    }
-    public void sortBirds(ArrayList<Bird> birds) {
-        Collections.sort(birds, new Comparator<Bird>() {
-            @Override
-            public int compare(Bird b1, Bird b2) {
-                // First compare by x position (max x first)
-                int xComparison = Float.compare(b2.getPosition().x, b1.getPosition().x);
-                if (xComparison != 0) {
-                    return xComparison; // If x positions are different, sort by x
-                }
-                // If x positions are the same, compare by y position (min y first)
-                return 0;
-            }
-        });
-    }}
+}
