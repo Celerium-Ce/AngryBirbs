@@ -8,7 +8,7 @@ AngryBirbs is an open-source clone of the popular game Angry Birds. The game is 
 
 `Mohammad Umar` `2023324`
 
-`Praveer` ``
+`Praveer Singh Chauhan` `2023397`
 
 ## Running the Project
 
@@ -71,9 +71,9 @@ AngryBirbs is an open-source clone of the popular game Angry Birds. The game is 
 - **Load/Save Game**: The game can be saved and loaded at any point.
 - **Level Editor**: The game has a level editor that allows users to create custom levels needs to use [Tiled Map Editor](https://www.mapeditor.org/)
 - **Abilities**: The game has different abilities for different birds.
-- - **Red** : Normal bird
-- - **Blue** : Splits into 3 birds
-- - **Yellow** : Speeds up
+  - **Red** : Normal bird
+  - **Blue** : Splits into 3 birds
+  - **Yellow** : Speeds up
 - **Accurate Physics**: The game uses Box2D for physics simulation.
 
 ## Implementation of Theory

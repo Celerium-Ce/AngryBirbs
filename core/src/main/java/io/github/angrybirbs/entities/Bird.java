@@ -8,8 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM; // 100/3
+// necessary imports
 
 public abstract class Bird implements power{
+    // Bird class
+    //  This class is responsible for rendering the bird and updating its position
+
     private Body body;
     private World world;
 
@@ -20,6 +24,8 @@ public abstract class Bird implements power{
 
 
     public Bird(World world, TiledMapTile tile, float x, float y) {
+        // Constructor for the bird just sets the world, tile, position on the screen and creates the body and fixture
+
         this.world=world;
         this.tile = tile;
         this.position = new Vector2(x, y);
@@ -73,6 +79,7 @@ public abstract class Bird implements power{
             Gdx.app.log("Bird", "Dispose called on a null body or world");
         }
     }
+
     public void togglephysics(){
         if (getBody().getType() == BodyDef.BodyType.StaticBody){
             getBody().setType(BodyDef.BodyType.DynamicBody);
