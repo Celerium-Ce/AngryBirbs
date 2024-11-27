@@ -146,6 +146,14 @@ The project uses JUnit for testing. The tests are located in the `core/test` dir
 - **Dispose**: Tests disposing of the material.
 - **Take Damage**: Tests taking damage by the material.
 
+## How to use Tiled to create levels
+
+1. Open Tiled Map Editor.
+2. Open the `core/assets/levels` directory.
+3. Open the `level1.tmx` file.
+4. Create the level using the tileset.
+5. Save as 'LevelName.tmx' in the `core/assets/levels` directory.
+6. Run the game and select the level.
 
 ## Online Resources
 
