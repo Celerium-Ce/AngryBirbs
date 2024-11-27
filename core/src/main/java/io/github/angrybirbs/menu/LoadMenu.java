@@ -3,23 +3,26 @@ package io.github.angrybirbs.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
+import io.github.angrybirbs.misc.LoadSave;
 import io.github.angrybirbs.Main;
-import com.badlogic.gdx.Gdx;
-import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.levels.Level;
 
 
 import java.io.File;
 import java.util.ArrayList;
+// necessary imports
 
 public class LoadMenu extends Menu{
+
+    // LoadMenu class that extends Menu
+    // This class is used to create the load menu of the game
+    // This menu is used to load saved games and delete them
 
     private TextureRegion bgTextureReigon;
     private TextureRegionDrawable bgDrawable;
@@ -29,7 +32,13 @@ public class LoadMenu extends Menu{
     private int saveFileCount = 0;
 
     public LoadMenu(Main game) {
+
+        // Constructor for the LoadMenu class
+
+        // Calls the constructor of the Menu class
         super(game);
+
+        // Sets the background texture of the load menu
         backgroundTexture = new Texture(Gdx.files.internal("MainMenuBG.png"));
         bgTextureReigon = new TextureRegion(backgroundTexture);
         bgDrawable = new TextureRegionDrawable(bgTextureReigon);
@@ -38,6 +47,16 @@ public class LoadMenu extends Menu{
         bgImage.setZIndex(0);
         stage.addActor(bgImage);
 
+        /*
+        How a button is created:
+        new ImageButton is created with two TextureRegionDrawables as parameters
+        The first TextureRegionDrawable is the image of the button when it is not pressed
+        The second TextureRegionDrawable is the image of the button when it is pressed
+        The button is then added to the stage
+        A ChangeListener is added to the button to listen for changes
+         */
+
+        // Sets the back button of the load menu
         back = new ImageButton(
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png")))),
             new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/back.png"))))
@@ -60,24 +79,34 @@ public class LoadMenu extends Menu{
 
         stage.addActor(back);
 
+
+        // Load the save files a
         saves = new ArrayList<ImageTextButton>();
 
-        File saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
-        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".json"));
+        // Load the save files
+        File saveDataDir = new File(Gdx.files.local("../SaveData").file().getAbsolutePath());
+        if (!(saveDataDir.exists())) {
+            saveDataDir = new File(Gdx.files.local("SaveData").file().getAbsolutePath());
+        }
+        File[] saveFiles = saveDataDir.listFiles((dir, name) -> name.endsWith(".ser"));
 
+        // If there are save files, create buttons for each save file
         if (saveFiles != null) {
             Skin skin = new Skin(Gdx.files.internal("skin/cloud-form-ui.json"));
             Table table = new Table();
             table.setFillParent(true);
             stage.addActor(table);
+            for (int i = 0; i < saveFiles.length; i++) {
+                File file = saveFiles[i];
 
-            for (File file : saveFiles) {
+                // Create a button for each save file
                 ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
                 style.font = skin.getFont("title");
                 style.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/empty.png")));
 
-                ImageTextButton saveButton = new ImageTextButton(file.getName().substring(0, file.getName().indexOf(".")), style);
+                ImageTextButton saveButton = new ImageTextButton("Save " + (i + 1), style);
 
+                // Create a table to hold the button and its label
                 Table buttonTable = new Table();
                 buttonTable.add(saveButton.getImage()).expand().bottom().row();
                 buttonTable.add(saveButton.getLabel()).expand().center().padBottom(10f);
@@ -85,19 +114,44 @@ public class LoadMenu extends Menu{
                 saveButton.clearChildren();
                 saveButton.add(buttonTable).expand().fill();
 
+                int finalI = i;
+                // Add a listener to the button to load the save file
                 saveButton.addListener(new ChangeListener() {
                     @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        String levelNum = saveButton.getText().toString();
-
-                        Level level = createLevelFromJson(file, Integer.parseInt(levelNum));
-                        game.setScreen(level);
-                        System.out.println("Loading save: " + file.getName());
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        World world = new World(new Vector2(0, -9.8f), true);
+                        Level level = LoadSave.loadLevel(game, world, finalI + 1);
+                        if (level != null) {
+                            game.setScreen(level);
+                        }
+                        dispose();
                     }
                 });
 
+                ImageButton.ImageButtonStyle deleteStyle = new ImageButton.ImageButtonStyle();
+                deleteStyle.imageUp = new TextureRegionDrawable(new Texture(Gdx.files.internal("Buttons/del.png")));
+                ImageButton deleteButton = new ImageButton(deleteStyle);
+
+                // Add a listener to the delete button to delete the save file
+                deleteButton.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                        if (file.delete()) {
+                            System.out.println("Save file " + (finalI + 1) + " deleted successfully.");
+                            game.setScreen(new LoadMenu(game));
+                            dispose();
+                        } else {
+                            System.out.println("Failed to delete save file " + (finalI + 1) + ".");
+                        }
+                    }
+                });
+
+                Table combinedTable = new Table();
+                combinedTable.add(saveButton).size(100, 100);
+                combinedTable.add(deleteButton).size(35, 35).top().left();
+
                 saves.add(saveButton);
-                table.add(saveButton).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
+                table.add(combinedTable).size(Gdx.graphics.getWidth() / 10f, Gdx.graphics.getHeight() / 10f).pad(10);
 
                 if (saves.size() % 5 == 0) {
                     table.row();
@@ -105,6 +159,7 @@ public class LoadMenu extends Menu{
             }
         }
         else {
+            // If there are no save files, display a message
             ImageButton noSaves = new ImageButton(
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png")))),
                 new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/noSaves.png"))))
@@ -119,77 +174,7 @@ public class LoadMenu extends Menu{
         }
     }
 
-    private Level createLevelFromJson(File file, int levelNum) {
-        Json json = new Json();
 
-        String jsonString = Gdx.files.absolute(file.getAbsolutePath()).readString();
-        JsonValue jsonData = json.fromJson(null, jsonString);
 
-        ArrayList<Bird> birds = new ArrayList<>();
-        ArrayList<Pig> pigs = new ArrayList<>();
-        ArrayList<Material> materials = new ArrayList<>();
 
-        JsonValue birdsData = jsonData.get("bird");
-        for (JsonValue birdType : birdsData) {
-            String type = birdType.name();
-            for (JsonValue position : birdType) {
-                float x = position.get(0).asFloat();
-                float y = position.get(1).asFloat();
-                switch (type) {
-                    case "red":
-                        birds.add(new Red((int) x, (int) y));
-                        break;
-                    case "blue":
-                        birds.add(new Blue((int) x, (int) y));
-                        break;
-                    case "yellow":
-                        birds.add(new Yellow((int) x, (int) y));
-                        break;
-                }
-            }
-        }
-
-        JsonValue pigsData = jsonData.get("pig");
-        for (JsonValue pigType : pigsData) {
-            String type = pigType.name();
-            for (JsonValue position : pigType) {
-                float x = position.get(0).asFloat();
-                float y = position.get(1).asFloat();
-                switch (type) {
-                    case "king":
-                        pigs.add(new King((int) x, (int) y));
-                        break;
-                    case "normal":
-                        pigs.add(new Normal((int) x, (int) y));
-                        break;
-                    case "general":
-                        pigs.add(new General((int) x, (int) y));
-                        break;
-                }
-            }
-        }
-
-        JsonValue materialsData = jsonData.get("material");
-        for (JsonValue materialType : materialsData) {
-            String type = materialType.name();
-            for (JsonValue position : materialType) {
-                float x = position.get(0).asFloat();
-                float y = position.get(1).asFloat();
-                boolean isHorizontal = position.get(2).asBoolean();
-
-                switch (type) {
-                    case "wood":
-                        materials.add(new Wood((int) x, (int) y, isHorizontal));
-                        break;
-                    case "ice":
-                        materials.add(new Ice((int) x, (int) y, isHorizontal));
-                        break;
-                    case "steel":
-                        materials.add(new Steel((int) x, (int) y, isHorizontal));
-                        break;
-                }
-            }
-        }
-        return new Level(game, birds, pigs, materials, levelNum);
-    }
 }

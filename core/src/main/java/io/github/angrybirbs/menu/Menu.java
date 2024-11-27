@@ -7,23 +7,37 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.angrybirbs.Main;
+// necessary imports
 
-/** First screen of the application. Displayed after the application is created. */
 public abstract class Menu implements Screen {
+
+    // Abstract class Menu that implements Screen
+    // This class is used to create all other menus in the game
+    // It has a reference to the game object and a stage object
+
     protected static Main game;
     protected final Stage stage;
     protected Texture backgroundTexture;
     public Menu(Main game) {
+
+        // Constructor for the Menu class
+
         this.game = game;
         stage=new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
     }
 
     public void setUi(Table ui) {
+
+        // Method to set the UI of the menu
+
         ui.setFillParent(true);
         stage.addActor(ui);
     }
 
+
+    // The following methods are overridden from the Screen interface
+    // Some unused methods are left empty
     @Override
     public void show() {
         // Prepare your screen here.
