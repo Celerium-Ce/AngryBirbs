@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Color;
 
 
-import io.github.angrybirbs.LoadSave;
+import io.github.angrybirbs.misc.LoadSave;
 import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;

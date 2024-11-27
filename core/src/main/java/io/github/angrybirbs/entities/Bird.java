@@ -14,7 +14,7 @@ public abstract class Bird implements power{
     private World world;
 
     private Vector2 position;
-    private final float width, height;
+    private float width, height;
     private final TiledMapTile tile;
     private boolean isDead;
 
@@ -48,6 +48,7 @@ public abstract class Bird implements power{
 
         this.isDead = false;
     }
+
 
     public void render(SpriteBatch batch) {
         setPosition(getBody().getPosition().x * PPM, getBody().getPosition().y * PPM);

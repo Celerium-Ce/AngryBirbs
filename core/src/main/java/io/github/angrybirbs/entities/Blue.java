@@ -1,5 +1,6 @@
 package io.github.angrybirbs.entities;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -13,6 +14,7 @@ public class Blue extends Bird {
         super(world,tile,x,y);
         this.health = 1000;
         this.powerUsed = false;
+
     }
 
     @Override

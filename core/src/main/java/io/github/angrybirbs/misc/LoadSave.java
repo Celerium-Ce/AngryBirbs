@@ -1,4 +1,4 @@
-package io.github.angrybirbs;
+package io.github.angrybirbs.misc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.MapLayer;
@@ -9,9 +9,9 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import io.github.angrybirbs.Main;
 import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.levels.Level;
-import io.github.angrybirbs.misc.Slingshot;
 
 import java.io.*;
 import java.util.*;
