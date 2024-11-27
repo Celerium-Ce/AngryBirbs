@@ -1,4 +1,4 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Pigs;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,25 +7,23 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-import static io.github.angrybirbs.levels.Level.PPM; // 100/3
+import static io.github.angrybirbs.levels.Level.PPM;
 // necessary imports
 
-public abstract class Bird implements power{
-    // Bird class
-    //  This class is responsible for rendering the bird and updating its position
-
+public abstract class Pig {
+    // Pig class
+    // This class is responsible for rendering the pig and updating its position
     private Body body;
     private World world;
 
     private Vector2 position;
-    private float width, height;
+    private final float width, height;
     private final TiledMapTile tile;
     private boolean isDead;
 
 
-    public Bird(World world, TiledMapTile tile, float x, float y) {
-        // Constructor for the bird just sets the world, tile, position on the screen and creates the body and fixture
-
+    public Pig(World world,TiledMapTile tile, float x, float y) {
+        // Constructor for the pig just sets the world, tile, position on the screen and creates the body and fixture
         this.world=world;
         this.tile = tile;
         this.position = new Vector2(x, y);
@@ -33,28 +31,28 @@ public abstract class Bird implements power{
         this.width = tile.getTextureRegion().getRegionWidth();
         this.height = tile.getTextureRegion().getRegionHeight();
 
-        // create a body for the bird
+        // creat body for pig
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(getPosition().x / PPM + getWidth()/(2*PPM), getPosition().y / PPM + getHeight()/(2*PPM));
 
         body = world.createBody(bodyDef);
 
         CircleShape shape = new CircleShape();
-        shape.setRadius(getWidth() / 2 / PPM);
+        shape.setRadius(width / 2 / PPM);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.density = 1.0f;
+        fixtureDef.friction = 10f;
+        fixtureDef.restitution = 0.1f;
 
         Fixture fixture=getBody().createFixture(fixtureDef);
         fixture.setUserData(this);
         getBody().setUserData(this);
         shape.dispose();
-
         this.isDead = false;
     }
-
 
     public void render(SpriteBatch batch) {
         setPosition(getBody().getPosition().x * PPM, getBody().getPosition().y * PPM);
@@ -74,11 +72,12 @@ public abstract class Bird implements power{
             }
             getWorld().destroyBody(getBody());
             setBody(null);
-            Gdx.app.log("Bird", "Body disposed successfully");
+            Gdx.app.log("Pig", "Body disposed successfully");
         } else {
-            Gdx.app.log("Bird", "Dispose called on a null body or world");
+            Gdx.app.log("Pig", "Dispose called on a null body or world");
         }
     }
+
 
     public void togglephysics(){
         if (getBody().getType() == BodyDef.BodyType.StaticBody){
@@ -88,6 +87,8 @@ public abstract class Bird implements power{
             getBody().setType(BodyDef.BodyType.StaticBody);
         }
     }
+
+
 
     public boolean isDead() {
         return isDead;
@@ -142,5 +143,4 @@ public abstract class Bird implements power{
     public void takeDamage(float damage) {  }
     public abstract float getHealth();
     public abstract void setHealth(float health);
-
 }

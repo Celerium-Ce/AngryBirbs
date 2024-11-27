@@ -1,4 +1,4 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Materials;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;

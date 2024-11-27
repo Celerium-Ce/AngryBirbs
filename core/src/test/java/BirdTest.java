@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import io.github.angrybirbs.entities.Bird;
-import io.github.angrybirbs.entities.Red;
+import io.github.angrybirbs.entities.Birds.Bird;
+import io.github.angrybirbs.entities.Birds.Red;
 import org.junit.Before;
 import org.junit.Test;
 // necessary imports

@@ -1,4 +1,4 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Materials;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

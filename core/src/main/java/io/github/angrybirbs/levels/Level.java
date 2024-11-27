@@ -18,9 +18,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.Color;
 
 
+import io.github.angrybirbs.entities.Birds.Bird;
+import io.github.angrybirbs.entities.Materials.Material;
+import io.github.angrybirbs.entities.Pigs.Pig;
 import io.github.angrybirbs.misc.LoadSave;
 import io.github.angrybirbs.Main;
-import io.github.angrybirbs.entities.*;
 import io.github.angrybirbs.menu.LevelsMenu;
 import io.github.angrybirbs.misc.GameContactListener;
 import io.github.angrybirbs.misc.Slingshot;

@@ -1,6 +1,5 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Birds;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;

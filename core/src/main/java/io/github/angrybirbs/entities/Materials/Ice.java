@@ -1,14 +1,14 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Materials;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Wood extends Material {
+public class Ice extends Material {
     private float health;
 
-    public Wood(TiledMapTile tile, float x, float y, World world) {
-        super(tile, x, y,world, 4f, 0.3f, 0.05f); // density, friction, restitution
-        this.health = 7f;
+    public Ice(TiledMapTile tile, float x, float y, World world) {
+        super(tile, x, y,world, 2.5f, 0.1f, 0.02f); // density, friction, restitution
+        this.health = 3f;
     }
 
     @Override
@@ -17,7 +17,7 @@ public class Wood extends Material {
         if (getHealth() <= 0){
             setDead();
         }
-        System.out.println("Wood took " + damage + " damage and has " + getHealth() + " health left");
+        System.out.println("Ice took " + damage + " damage and has " + getHealth() + " health left");
     }
 
     @Override

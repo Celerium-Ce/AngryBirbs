@@ -1,14 +1,15 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Pigs;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Normal extends Pig {
+public class General extends Pig {
     private float health;
 
-    public Normal(World world, TiledMapTile tile, float x, float y) {
+    public General(World world, TiledMapTile tile, float x, float y) {
         super(world,tile,x,y);
-        this.health = 2.5f;
+        this.health = 10;
+
     }
 
     @Override
@@ -17,7 +18,7 @@ public class Normal extends Pig {
         if (getHealth() <= 0){
             setDead();
         }
-        System.out.println("Normal took " + damage + " damage and has " + getHealth() + " health left");
+        System.out.println("General took " + damage + " damage and has " + getHealth() + " health left");
     }
 
     @Override
@@ -28,4 +29,5 @@ public class Normal extends Pig {
     public void setHealth(float health){
         this.health = health;
     }
+
 }

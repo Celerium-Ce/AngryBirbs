@@ -1,14 +1,14 @@
-package io.github.angrybirbs.entities;
+package io.github.angrybirbs.entities.Pigs;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.physics.box2d.World;
 
-public class Ice extends Material {
+public class King extends Pig {
     private float health;
 
-    public Ice(TiledMapTile tile, float x, float y, World world) {
-        super(tile, x, y,world, 2.5f, 0.1f, 0.02f); // density, friction, restitution
-        this.health = 3f;
+    public King(World world, TiledMapTile tile, float x, float y) {
+        super(world,tile,x,y);
+        this.health = 15;
     }
 
     @Override
@@ -17,7 +17,7 @@ public class Ice extends Material {
         if (getHealth() <= 0){
             setDead();
         }
-        System.out.println("Ice took " + damage + " damage and has " + getHealth() + " health left");
+        System.out.println("King took " + damage + " damage and has " + getHealth() + " health left");
     }
 
     @Override
@@ -29,4 +29,3 @@ public class Ice extends Material {
         this.health = health;
     }
 }
-

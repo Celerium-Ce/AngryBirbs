@@ -3,9 +3,9 @@ package io.github.angrybirbs.misc;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import io.github.angrybirbs.entities.Bird;
-import io.github.angrybirbs.entities.Material;
-import io.github.angrybirbs.entities.Pig;
+import io.github.angrybirbs.entities.Birds.Bird;
+import io.github.angrybirbs.entities.Materials.Material;
+import io.github.angrybirbs.entities.Pigs.Pig;
 // necessary imports
 
 // This class is responsible for handling the collision events between the game objects.
