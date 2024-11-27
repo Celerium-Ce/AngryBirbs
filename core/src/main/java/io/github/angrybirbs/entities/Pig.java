@@ -8,8 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM;
+// necessary imports
 
 public abstract class Pig {
+    // Pig class
+    // This class is responsible for rendering the pig and updating its position
     private Body body;
     private World world;
 
@@ -20,6 +23,7 @@ public abstract class Pig {
 
 
     public Pig(World world,TiledMapTile tile, float x, float y) {
+        // Constructor for the pig just sets the world, tile, position on the screen and creates the body and fixture
         this.world=world;
         this.tile = tile;
         this.position = new Vector2(x, y);

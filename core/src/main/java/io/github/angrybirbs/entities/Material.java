@@ -8,8 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 import static io.github.angrybirbs.levels.Level.PPM;
+// necessary imports
 
 public abstract class Material {
+    // material class
+    //  This class is responsible for rendering the material and updating its position
     private final TiledMapTile tile;
     private Vector2 position;
     private float width, height;
@@ -20,6 +23,7 @@ public abstract class Material {
     private boolean isDead;
 
     public Material(TiledMapTile tile, float x, float y,World world, float density, float friction, float restitution) {
+        // Constructor for the material just sets the world, tile, position on the screen and creates the body and fixture
         this.tile = tile;
         this.world=world;
 

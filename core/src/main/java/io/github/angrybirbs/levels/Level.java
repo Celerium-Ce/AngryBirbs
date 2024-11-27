@@ -28,8 +28,11 @@ import io.github.angrybirbs.misc.Slingshotinputprocessor;
 
 import java.util.Iterator;
 import java.util.List;
+// necessary imports
 
 public class Level implements Screen {
+    // level class
+    //  This class is responsible for calling render of all objects, show pause and endgame screens
     protected Main game;
     protected Texture backgroundTexture;
     protected SpriteBatch batch;
@@ -45,11 +48,6 @@ public class Level implements Screen {
     public static List<Bird> birds;
     protected List<Pig> pigs;
     protected List<Material> materials;
-
-
-    protected List<Bird> initialBirds;
-    protected List<Pig> initialPigs;
-    protected List<Material> initialMaterials;
 
 
     protected boolean isPaused;
@@ -72,6 +70,9 @@ public class Level implements Screen {
     private float groundY;
 
     public Level(Main game,World world, Slingshot slingshot, List<Bird> birds, List<Pig> pigs, List<Material> materials, int levelNum, float groundY) {
+        // Constructor for the level just sets the passed parameters,
+        // creates the camra, set up the contactListener, makes ground's body and fixture and sets 1st bird as active
+
         this.game = game;
         gameEnded = false;
         this.levelNum = levelNum;
@@ -125,6 +126,8 @@ public class Level implements Screen {
 
 
     private void setupButtons() {
+        // pause -> pause; menu -> switch back to level select; next -> go to the next level by calling the function in level menu
+        // resume -> resume; restart-> restart the menu by recreating the level by calling the function in level menu; save -> save data by using Load save class
         pauseButton = new ImageButton(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/pause.png")))));
         pauseButton.setPosition(10, Gdx.graphics.getHeight() - 60);
         pauseButton.setSize(50, 50);
@@ -202,6 +205,7 @@ public class Level implements Screen {
     }
 
     private void setupGameEnd() {
+        // creates the win/loose screen actors
         winImage = new Image(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("Buttons/winscreen.png")))));
         winImage.setSize(Gdx.graphics.getWidth() / 3f, Gdx.graphics.getHeight() / 3f);
         winImage.setPosition((Gdx.graphics.getWidth() - winImage.getWidth()) / 2f,
@@ -232,7 +236,7 @@ public class Level implements Screen {
     }
 
     private boolean checkWinCondition() {
-
+        //   win if all pigs are dead
         return pigs.isEmpty() && !gameEnded;
 
     }
@@ -245,6 +249,7 @@ public class Level implements Screen {
     }
 
     private boolean checkLooseCondition() {
+        // loose if all birds are used up and all objects have stopped moving (in case a material might fall on a pig and kill it)
         return birds.isEmpty() && allObjectsStopped() && !gameEnded;
     }
 
